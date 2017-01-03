@@ -11,6 +11,7 @@ package components
 	import flash.utils.getQualifiedClassName;
 	import mx.containers.HDividedBox;
 	import mx.containers.VDividedBox;
+	import mx.controls.Alert;
 	import mx.controls.MovieClipSWFLoader;
 	import mx.controls.TextArea;
 	import mx.controls.Tree;
@@ -232,7 +233,7 @@ package components
 			}
 			catch (err:Error)
 			{
-				//Alert.show(err.message);				
+				Alert.show(err.message);
 			}
 			
 			refreshBtn.enabled = true;
@@ -314,12 +315,6 @@ package components
 			switch (target.id)
 			{
 			case "tree0": 
-				
-				
-				//TODO to delete
-				trace(describeType(dob));
-				
-				
 				node0 = target.selectedItem as XML;
 				dob = childList[String(node0.@name)];
 				//	
