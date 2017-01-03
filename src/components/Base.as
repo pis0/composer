@@ -314,12 +314,18 @@ package components
 			switch (target.id)
 			{
 			case "tree0": 
+				
+				
+				//TODO to delete
+				trace(describeType(dob));
+				
+				
 				node0 = target.selectedItem as XML;
 				dob = childList[String(node0.@name)];
 				//	
 				tree1.dataProvider = describeType(dob)..accessor.( //
 				//(@declaredBy == "flash.display::DisplayObject" || @declaredBy == "flash.display::DisplayObjectContainer" || @declaredBy == "flash.display::Sprite") //
-				(@declaredBy == "starling.display::DisplayObject" || @declaredBy == "starling.display::DisplayObjectContainer" || @declaredBy == "starling.display::Sprite") //
+				(@declaredBy == "starling.display::DisplayObject" || @declaredBy == "starling.display::DisplayObjectContainer" || @declaredBy == "starling.display::Sprite" || @declaredBy == "starling.text::TextField") //
 				&& @access == "readwrite" //
 				&& (@type == "Number" || @type == "Boolean" || @type == "String")); //
 				//&& @name != "name");
