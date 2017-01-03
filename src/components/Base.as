@@ -11,6 +11,7 @@ package components
 	import flash.utils.getQualifiedClassName;
 	import mx.containers.HDividedBox;
 	import mx.containers.VDividedBox;
+	import mx.controls.Alert;
 	import mx.controls.MovieClipSWFLoader;
 	import mx.controls.TextArea;
 	import mx.controls.Tree;
@@ -232,7 +233,7 @@ package components
 			}
 			catch (err:Error)
 			{
-				//Alert.show(err.message);				
+				Alert.show(err.message);
 			}
 			
 			refreshBtn.enabled = true;
@@ -319,7 +320,7 @@ package components
 				//	
 				tree1.dataProvider = describeType(dob)..accessor.( //
 				//(@declaredBy == "flash.display::DisplayObject" || @declaredBy == "flash.display::DisplayObjectContainer" || @declaredBy == "flash.display::Sprite") //
-				(@declaredBy == "starling.display::DisplayObject" || @declaredBy == "starling.display::DisplayObjectContainer" || @declaredBy == "starling.display::Sprite") //
+				(@declaredBy == "starling.display::DisplayObject" || @declaredBy == "starling.display::DisplayObjectContainer" || @declaredBy == "starling.display::Sprite" || @declaredBy == "starling.text::TextField") //
 				&& @access == "readwrite" //
 				&& (@type == "Number" || @type == "Boolean" || @type == "String")); //
 				//&& @name != "name");
