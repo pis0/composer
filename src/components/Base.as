@@ -96,7 +96,7 @@ package components
 		//
 		
 		private var canvas:MovieClipSWFLoader;
-		private var container:HDividedBox
+		private var container:HDividedBox;
 		
 		private var loader:Loader;
 		
