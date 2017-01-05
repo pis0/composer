@@ -16,7 +16,7 @@
     </define>
     <define append="true">
       <name>CONFIG::timeStamp</name>
-      <value>'03/01/2017'</value>
+      <value>'05/01/2017'</value>
     </define>
     <define append="true">
       <name>CONFIG::air</name>
@@ -41,8 +41,8 @@
   <file-specs>
     <path-element>E:\workspace\_composer\src\Main.mxml</path-element>
   </file-specs>
-  <default-background-color>#FFFFFF</default-background-color>
-  <default-frame-rate>30</default-frame-rate>
+  <default-background-color>#000000</default-background-color>
+  <default-frame-rate>60</default-frame-rate>
   <default-size>
     <width>1536</width>
     <height>1024</height>

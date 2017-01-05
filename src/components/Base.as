@@ -108,17 +108,37 @@ package components
 		
 		private function init(e:FlexEvent):void
 		{
-			// container
 			
+			this.setStyle("backgroundColor", 0x212121);
+			this.setStyle("contentBackgroundColor", 0x212121);
+			this.setStyle("chromeColor", 0xe4e4e4);
+			this.setStyle("color", 0x999999);			
+			this.setStyle("selectionColor", 0xcccccc);
+			this.setStyle("focusColor", 0x666666);
+			this.setStyle("rollOverColor", 0x999999);
+			this.setStyle("symbolColor", 0x000000);
+			
+			this.setStyle("focusedTextSelectionColor", 0x666666);
+			this.setStyle("unfocusedTextSelectionColor", 0x999999);
+			this.setStyle("inactiveTextSelectionColor", 0x333333);
+			
+			this.styleManager.getStyleDeclaration("spark.components.Button").setStyle("color", 0x000000); 
+
+
+			
+			// container						
 			container = new HDividedBox();
-			container.percentWidth = container.percentHeight = 100;
+			container.percentWidth = container.percentHeight = 100;				
 			
 			addElement(container);
 			
 			// left 
 			canvas = new MovieClipSWFLoader();
-			canvas.percentWidth = 50;
-			canvas.percentHeight = 100;
+			//canvas.percentWidth = 50;
+			//canvas.percentHeight = 100;
+			canvas.width = 768;
+			canvas.height = 1024;
+			
 			
 			container.addElement(canvas);
 			
@@ -135,18 +155,21 @@ package components
 			refreshDefinitionText = new TextArea();
 			refreshDefinitionText.width = 300;
 			refreshDefinitionText.height = 20;
+			refreshDefinitionText.x = 4;
 			refreshDefinitionText.y = 4;
 			refreshDefinitionText.text = DEFAULT_DEFINITION;
 			
 			refreshMethodsText = new TextArea();
 			refreshMethodsText.width = 300;
 			refreshMethodsText.height = 20;
+			refreshMethodsText.x = 4;
 			refreshMethodsText.y = 28;
 			refreshMethodsText.text = DEFAULT_METHODS;
 			
 			refreshBtn = new Button();
 			refreshBtn.width = 80;
 			refreshBtn.height = 40;
+			refreshBtn.x = 4;
 			refreshBtn.y = 60;
 			refreshBtn.label = "APPLY";
 			
@@ -320,9 +343,21 @@ package components
 				//	
 				tree1.dataProvider = describeType(dob)..accessor.( //
 				//(@declaredBy == "flash.display::DisplayObject" || @declaredBy == "flash.display::DisplayObjectContainer" || @declaredBy == "flash.display::Sprite") //
-				(@declaredBy == "starling.display::DisplayObject" || @declaredBy == "starling.display::DisplayObjectContainer" || @declaredBy == "starling.display::Sprite" || @declaredBy == "starling.text::TextField") //
+				( //
+				@declaredBy == "starling.display::DisplayObject"  //
+				|| @declaredBy == "starling.display::DisplayObjectContainer" //
+				|| @declaredBy == "starling.display::Image" //
+				|| @declaredBy == "starling.display::Sprite" //
+				|| @declaredBy == "starling.display::Sprite3D" //
+				|| @declaredBy == "starling.text::TextField" //
+				//
+				|| @declaredBy == "com.assukar.view.starling::Component" // Custom
+				|| @declaredBy == "com.assukar.view.starling::AssukarTextField" // Custom
+				|| @declaredBy == "com.assukar.view.starling::AssukarMovieClip" // Custom
+				|| @declaredBy == "com.assukar.view.starling::AssukarMovieBytes" // Custom
+				) //
 				&& @access == "readwrite" //
-				&& (@type == "Number" || @type == "Boolean" || @type == "String")); //
+				&& (@type == "int" || @type == "Number" || @type == "Boolean" || @type == "String")); //
 				//&& @name != "name");
 				//				
 				for each (var node:XML in tree1.dataProvider) delete node.metadata;
