@@ -335,9 +335,9 @@ package components
 				node0 = target.selectedItem as XML;
 				dob = childList[String(node0.@name)];
 				//	
-				tree1.dataProvider = describeType(dob)..accessor.( //
-				//(@declaredBy == "flash.display::DisplayObject" || @declaredBy == "flash.display::DisplayObjectContainer" || @declaredBy == "flash.display::Sprite") //
-				( //
+				tree1.dataProvider = describeType(dob).elements().( //
+				(//
+				name() == "accessor" && ( //
 				@declaredBy == "starling.display::DisplayObject"  //
 				|| @declaredBy == "starling.display::DisplayObjectContainer" //
 				|| @declaredBy == "starling.display::Image" //
@@ -350,21 +350,15 @@ package components
 				|| @declaredBy == "com.assukar.view.starling::AssukarMovieClip" // Custom
 				|| @declaredBy == "com.assukar.view.starling::AssukarMovieBytes" // Custom
 				) //
-				&& @access == "readwrite" //
-				&& ( //
-				@type == "int" //
-				|| @type == "Number" //
-				|| @type == "Boolean" //
-				|| @type == "String" //
-				)); //
-				//&& @name != "name");
-				//		
+				&& @access == "readwrite") || name() == "variable" //
+				).(@type == "int" || @type == "Number" || @type == "Boolean" || @type == "String").(@name != "name"); //
+				////		
 				updatePropsList();
 				//
 				tree1.labelField = "@name";
 				
 				// global / local positions
-				DisplayObject(dob).removeEventListeners();
+				if (DisplayObject(dob).hasEventListener(TouchEvent.TOUCH)) DisplayObject(dob).removeEventListener(TouchEvent.TOUCH, updatePositionsDisplay);
 				dob.addEventListener(TouchEvent.TOUCH, updatePositionsDisplay);
 				
 				break;
@@ -390,7 +384,7 @@ package components
 			if (t)
 			{
 				l = t.getLocation(dob as DisplayObject);
-				cursorPosition.text = "global( " + t.globalX + ", " + t.globalY + " ) - local( " + l.x + ", " + l.y + " )";
+				cursorPosition.text = "global( " + int(t.globalX) + ", " + int(t.globalY) + " ) - local( " + int(l.x) + ", " + int(l.y) + " )";
 				cursorPosition.alpha = 1.0;
 			}
 			else
