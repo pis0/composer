@@ -112,7 +112,7 @@ package components
 			this.setStyle("backgroundColor", 0x212121);
 			this.setStyle("contentBackgroundColor", 0x212121);
 			this.setStyle("chromeColor", 0xe4e4e4);
-			this.setStyle("color", 0x999999);			
+			this.setStyle("color", 0x999999);
 			this.setStyle("selectionColor", 0xcccccc);
 			this.setStyle("focusColor", 0x666666);
 			this.setStyle("rollOverColor", 0x999999);
@@ -122,13 +122,11 @@ package components
 			this.setStyle("unfocusedTextSelectionColor", 0x999999);
 			this.setStyle("inactiveTextSelectionColor", 0x333333);
 			
-			this.styleManager.getStyleDeclaration("spark.components.Button").setStyle("color", 0x000000); 
-
-
+			this.styleManager.getStyleDeclaration("spark.components.Button").setStyle("color", 0x000000);
 			
 			// container						
 			container = new HDividedBox();
-			container.percentWidth = container.percentHeight = 100;				
+			container.percentWidth = container.percentHeight = 100;
 			
 			addElement(container);
 			
@@ -138,7 +136,6 @@ package components
 			//canvas.percentHeight = 100;
 			canvas.width = 768;
 			canvas.height = 1024;
-			
 			
 			container.addElement(canvas);
 			
