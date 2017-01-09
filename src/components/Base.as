@@ -339,6 +339,9 @@ package components
 			case "tree0": 
 				node0 = target.selectedItem as XML;
 				dob = childList[String(node0.@name)];
+				
+				if (dob.hasOwnProperty("unflatten")) dob["unflatten"]();
+				
 				//	
 				tree1.dataProvider = describeType(dob).elements().( //
 				(//
@@ -351,7 +354,7 @@ package components
 				|| @declaredBy == "starling.text::TextField" //
 				//
 				|| @declaredBy == "com.assukar.view.starling::Component" // Custom
-				|| @declaredBy == "com.assukar.view.starling::AssukarTextField" // Custom
+				|| @declaredBy == "com.assukar.view.starling::AssukarTextField" // Custom 
 				|| @declaredBy == "com.assukar.view.starling::AssukarMovieClip" // Custom
 				|| @declaredBy == "com.assukar.view.starling::AssukarMovieBytes" // Custom
 				) //
@@ -423,7 +426,7 @@ package components
 				if (editorContainer.numElements <= 1)
 				{
 					var input:*;
-					if (node1.@type == "Number")
+					if (node1.@type == "Number" || node1.@type == "int")
 					{
 						if (nodeName == "alpha")
 						{
