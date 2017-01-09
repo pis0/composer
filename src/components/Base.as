@@ -356,7 +356,12 @@ package components
 				|| @declaredBy == "com.assukar.view.starling::AssukarMovieBytes" // Custom
 				) //
 				&& @access == "readwrite") // || name() == "variable" //
-				).(@type == "int" || @type == "Number" || @type == "Boolean" || @type == "String").(@name != "name"); //
+				).( //
+				@type == "int" //
+				|| @type == "Number" //
+				|| @type == "Boolean" //
+				|| @type == "String" //
+				).(@name != "name"); // 
 				//
 				
 				tree1.visible = false;
