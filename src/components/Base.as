@@ -1,14 +1,19 @@
 package components
 {
 	
+	import flash.desktop.Clipboard;
+	import flash.desktop.ClipboardFormats;
 	import flash.display.Loader;
 	import flash.display.LoaderInfo;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.geom.Point;
 	import flash.net.URLRequest;
 	import flash.utils.Dictionary;
+	import flash.utils.clearInterval;
 	import flash.utils.describeType;
 	import flash.utils.getQualifiedClassName;
+	import flash.utils.setInterval;
 	import mx.containers.HDividedBox;
 	import mx.containers.VDividedBox;
 	import mx.controls.Alert;
@@ -26,6 +31,9 @@ package components
 	import spark.components.TextInput;
 	import spark.components.ToggleButton;
 	import spark.components.supportClasses.Range;
+	import starling.display.DisplayObject;
+	import starling.events.Touch;
+	import starling.events.TouchEvent;
 	
 	public class Base extends Application
 	{
@@ -64,7 +72,7 @@ package components
 				while (methodsTemp.length) clazz = clazz[methodsTemp.shift()];
 			}
 			var list0:XML = parseComp(clazz, null);
-			for (var key:String in childList) trace(key, childList[key]);
+			//for (var key:String in childList) trace(key, childList[key]);
 			tree0.dataProvider = list0;
 			tree0.labelField = "@name";
 		}
@@ -83,6 +91,8 @@ package components
 		private var canvas:MovieClipSWFLoader;
 		private var container:HDividedBox
 		private var loader:Loader;
+		
+		private var cursorPosition:TextArea;
 		
 		private function init(e:FlexEvent):void
 		{
@@ -108,7 +118,7 @@ package components
 			
 			refreshContainer = new Group();
 			refreshContainer.percentWidth = 100;
-			refreshContainer.percentHeight = 10;
+			refreshContainer.percentHeight = 15;
 			
 			refreshDefinitionText = new TextArea();
 			refreshDefinitionText.width = 300;
@@ -137,14 +147,25 @@ package components
 			playPauseBtn.x = 84;
 			playPauseBtn.y = 60;
 			
+			cursorPosition = new TextArea();
+			cursorPosition.width = 300;
+			cursorPosition.height = 20;
+			cursorPosition.x = 4;
+			cursorPosition.y = 60 + 40 + 14;
+			cursorPosition.text = "global( 0, 0 ) - local( 0, 0 )";
+			cursorPosition.editable = false;
+			cursorPosition.selectable = false;
+			cursorPosition.alpha = 0.6;
+			
 			refreshContainer.addElement(refreshDefinitionText);
 			refreshContainer.addElement(refreshMethodsText);
 			refreshContainer.addElement(refreshBtn);
 			refreshContainer.addElement(playPauseBtn);
+			refreshContainer.addElement(cursorPosition);
 			
 			tree0 = new Tree();
 			tree0.percentWidth = 100;
-			tree0.percentHeight = 90;
+			tree0.percentHeight = 85;
 			tree0.showRoot = false;
 			tree0.id = "tree0";
 			
@@ -159,13 +180,13 @@ package components
 			
 			tree1 = new Tree();
 			tree1.percentWidth = 100;
-			tree1.percentHeight = 80;
+			tree1.percentHeight = 60;
 			tree1.showRoot = false;
 			tree1.id = "tree1";
 			
 			editorContainer = new Group();
 			editorContainer.percentWidth = 100;
-			editorContainer.percentHeight = 20;
+			editorContainer.percentHeight = 40;
 			
 			text = new TextArea();
 			text.percentWidth = 100;
@@ -182,6 +203,7 @@ package components
 			// events
 			tree0.addEventListener(ListEvent.CHANGE, treeChange);
 			tree1.addEventListener(ListEvent.CHANGE, treeChange);
+			tree1.allowMultipleSelection = true;
 			
 			refreshBtn.addEventListener(MouseEvent.CLICK, refreshBtnClick);
 			refreshBtn.enabled = true;
@@ -213,6 +235,9 @@ package components
 			this.styleManager.getStyleDeclaration("spark.components.Button").setStyle("color", 0x000000);
 			
 			playPauseBtn.setStyle("icon", playpauseicon);
+			
+			cursorPosition.setStyle("borderVisible", false);
+			cursorPosition.setStyle("color", 0x888888);
 		}
 		
 		private function load():void
@@ -314,10 +339,13 @@ package components
 			case "tree0": 
 				node0 = target.selectedItem as XML;
 				dob = childList[String(node0.@name)];
+				
+				if (dob.hasOwnProperty("unflatten")) dob["unflatten"]();
+				
 				//	
-				tree1.dataProvider = describeType(dob)..accessor.( //
-				//(@declaredBy == "flash.display::DisplayObject" || @declaredBy == "flash.display::DisplayObjectContainer" || @declaredBy == "flash.display::Sprite") //
-				( //
+				tree1.dataProvider = describeType(dob).elements().( //
+				(//
+				name() == "accessor" && ( //
 				@declaredBy == "starling.display::DisplayObject"  //
 				|| @declaredBy == "starling.display::DisplayObjectContainer" //
 				|| @declaredBy == "starling.display::Image" //
@@ -326,27 +354,39 @@ package components
 				|| @declaredBy == "starling.text::TextField" //
 				//
 				|| @declaredBy == "com.assukar.view.starling::Component" // Custom
-				|| @declaredBy == "com.assukar.view.starling::AssukarTextField" // Custom
+				|| @declaredBy == "com.assukar.view.starling::AssukarTextField" // Custom 
 				|| @declaredBy == "com.assukar.view.starling::AssukarMovieClip" // Custom
 				|| @declaredBy == "com.assukar.view.starling::AssukarMovieBytes" // Custom
 				) //
-				&& @access == "readwrite" //
-				&& ( //
+				&& @access == "readwrite") // || name() == "variable" //
+				).( //
 				@type == "int" //
 				|| @type == "Number" //
 				|| @type == "Boolean" //
 				|| @type == "String" //
-				)); //
-				//&& @name != "name");
-				//				
-				for each (var node:XML in tree1.dataProvider) delete node.metadata;
-				tree1.invalidateDisplayList();
+				).(@name != "name"); // 
 				//
+				
+				tree1.visible = false;
+				updatePropsList();
+				
 				tree1.labelField = "@name";
+				
+				// global / local positions
+				if (DisplayObject(dob).hasEventListener(TouchEvent.TOUCH)) DisplayObject(dob).removeEventListener(TouchEvent.TOUCH, updatePositionsDisplay);
+				dob.addEventListener(TouchEvent.TOUCH, updatePositionsDisplay);
+				
 				break;
-			case "tree1": 
+			case "tree1":
+				
 				node1 = target.selectedItem as XML;
-				text.text = node1.@name + ":    " + node1.@type + "\nvalue:    " + dob[node1.@name];
+				
+				parsePropsToObjectAndCopy();
+				
+				if (target.selectedItems.length >= 2 || !node1) return;
+				
+				var nodeName:String = String(node1.@name).split(":")[0];
+				text.text = nodeName + ":    " + node1.@type + "\nvalue:    " + fixPropName(dob[nodeName]);
 				//
 				canvas.addEventListener(Event.ENTER_FRAME, canvasChange);
 				editorContainer.addElement(text);
@@ -358,18 +398,37 @@ package components
 		
 		}
 		
+		private function updatePositionsDisplay(e:TouchEvent):void
+		{
+			var t:Touch = e.getTouch(dob as DisplayObject);
+			var l:Point;
+			if (t)
+			{
+				l = t.getLocation(dob as DisplayObject);
+				cursorPosition.text = "global( " + int(t.globalX) + ", " + int(t.globalY) + " ) - local( " + int(l.x) + ", " + int(l.y) + " )";
+				cursorPosition.alpha = 1.0;
+			}
+			else
+			{
+				cursorPosition.text = "global( 0, 0 ) - local( 0, 0)";
+				cursorPosition.alpha = 0.6;
+			}
+		}
+		
 		private function canvasChange(e:Event):void
 		{
 			if (text && text.text.length && node1 && dob)
 			{
-				text.text = node1.@name + ":    " + node1.@type + "\nvalue:    " + dob[node1.@name];
+				var nodeName:String = String(node1.@name).split(":")[0];
+				
+				text.text = nodeName + ":    " + node1.@type + "\nvalue:    " + fixPropName(dob[nodeName]);
 				
 				if (editorContainer.numElements <= 1)
 				{
 					var input:*;
-					if (node1.@type == "Number")
+					if (node1.@type == "Number" || node1.@type == "int")
 					{
-						if (node1.@name == "alpha")
+						if (nodeName == "alpha")
 						{
 							input = new HSlider();
 							HSlider(input).minimum = 0;
@@ -382,22 +441,22 @@ package components
 							input = new NumericStepper();
 							NumericStepper(input).minimum = -int.MAX_VALUE;
 							NumericStepper(input).maximum = int.MAX_VALUE;
-							//NumericStepper(input).stepSize = String(node1.@name).search("scale") != -1 ? 0.01 : 1;
-							NumericStepper(input).stepSize = String(node1.@name).search("scale") != -1 || String(node1.@name).search("rotation") != -1 ? 0.01 : 1;
+							NumericStepper(input).stepSize = String(nodeName).search("scale") != -1 || String(nodeName).search("rotation") != -1 ? 0.01 : 1;
 						}
 						
-						Range(input).value = Number(dob[node1.@name]);
-						
+						Range(input).value = Number(dob[nodeName]);
 					}
 					else if (node1.@type == "Boolean")
 					{
 						input = new CheckBox();
-						CheckBox(input).selected = Boolean(dob[node1.@name]);
+						CheckBox(input).selected = Boolean(dob[nodeName]);
 					}
 					else if (node1.@type == "String")
 					{
 						input = new TextInput();
-						TextInput(input).text = String(dob[node1.@name]);
+						TextInput(input).width = 300;
+						TextInput(input).height = 40;
+						TextInput(input).text = String(dob[nodeName]);
 					}
 					else trace("no valid type");
 					
@@ -405,18 +464,27 @@ package components
 					input.y = text.height + 5;
 					input.addEventListener(Event.CHANGE, function(e:Event):void
 					{
-						if (e.currentTarget is Range) dob[node1.@name] = input["value"];
-						else if (e.currentTarget is CheckBox) dob[node1.@name] = CheckBox(input).selected;
-						else if (e.currentTarget is TextInput)
+						try
 						{
-							try
+							if (e.currentTarget is Range)
 							{
-								dob[node1.@name] = TextInput(input).text;
+								dob[nodeName] = input["value"];
+								updatePropsList();
 							}
-							catch (e:Error)
+							else if (e.currentTarget is CheckBox)
 							{
-								trace(e.message);
+								dob[nodeName] = CheckBox(input).selected;
+								updatePropsList();
 							}
+							else if (e.currentTarget is TextInput)
+							{
+								dob[nodeName] = TextInput(input).text;
+								updatePropsList();
+							}
+						}
+						catch (err:Error)
+						{
+							Alert.show(err.message);
 						}
 					});
 					
@@ -424,6 +492,58 @@ package components
 				}
 			}
 		}
+		
+		private var updatePropsListDelay:uint;
+		private const UPDATE_PROPS_LIST_DELAY_TIME:Number = 100;
+		
+		private function updatePropsList():void
+		{
+			clearInterval(updatePropsListDelay);
+			updatePropsListDelay = setInterval(function():void
+			{
+				var tempNodeName:String;
+				for each (var node:XML in tree1.dataProvider)
+				{
+					tempNodeName = String(node.@name).split(":")[0];
+					node.@name = fixPropName(tempNodeName + ": " + dob[tempNodeName]);
+					delete node.metadata;
+				}
+				tree1.invalidateList();
+				clearInterval(updatePropsListDelay);
+				
+				tree1.visible = true;
+			
+			}, UPDATE_PROPS_LIST_DELAY_TIME);
+		
+		}
+		
+		private function fixPropName(value:String):String
+		{
+			value = value.replace(/[\u000d\u000a\u0008\u0020]+/g, " ");
+			return value.length >= 30 ? value.slice(0, 30) + "..." : value;
+		}
+		
+		private function parsePropsToObjectAndCopy():void
+		{
+			var temp:Array;
+			var result:String = "{";
+			var value:String;
+			var valueTemp:*;
+			var flag:Boolean = false;
+			for each (var item:XML in tree1.selectedItems)
+			{
+				if (flag) result += ", ";
+				temp = item.@name.split(": ");
+				valueTemp = dob[temp[0]];
+				value = valueTemp is String ? JSON.stringify(valueTemp) : String(valueTemp);
+				result += temp[0] + ": " + value
+				flag = true;
+			}
+			result += "}";
+			
+			Clipboard.generalClipboard.setData(ClipboardFormats.TEXT_FORMAT, result);
+		}
 	
 	}
 }
+
