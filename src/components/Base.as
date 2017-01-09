@@ -1,6 +1,8 @@
 package components
 {
 	
+	import flash.desktop.Clipboard;
+	import flash.desktop.ClipboardFormats;
 	import flash.display.Loader;
 	import flash.display.LoaderInfo;
 	import flash.events.Event;
@@ -8,8 +10,10 @@ package components
 	import flash.geom.Point;
 	import flash.net.URLRequest;
 	import flash.utils.Dictionary;
+	import flash.utils.clearInterval;
 	import flash.utils.describeType;
 	import flash.utils.getQualifiedClassName;
+	import flash.utils.setInterval;
 	import mx.containers.HDividedBox;
 	import mx.containers.VDividedBox;
 	import mx.controls.Alert;
@@ -199,6 +203,7 @@ package components
 			// events
 			tree0.addEventListener(ListEvent.CHANGE, treeChange);
 			tree1.addEventListener(ListEvent.CHANGE, treeChange);
+			tree1.allowMultipleSelection = true;
 			
 			refreshBtn.addEventListener(MouseEvent.CLICK, refreshBtnClick);
 			refreshBtn.enabled = true;
@@ -350,11 +355,13 @@ package components
 				|| @declaredBy == "com.assukar.view.starling::AssukarMovieClip" // Custom
 				|| @declaredBy == "com.assukar.view.starling::AssukarMovieBytes" // Custom
 				) //
-				&& @access == "readwrite") || name() == "variable" //
+				&& @access == "readwrite") // || name() == "variable" //
 				).(@type == "int" || @type == "Number" || @type == "Boolean" || @type == "String").(@name != "name"); //
-				////		
-				updatePropsList();
 				//
+				
+				tree1.visible = false;
+				updatePropsList();
+				
 				tree1.labelField = "@name";
 				
 				// global / local positions
@@ -362,8 +369,14 @@ package components
 				dob.addEventListener(TouchEvent.TOUCH, updatePositionsDisplay);
 				
 				break;
-			case "tree1": 
+			case "tree1":
+				
 				node1 = target.selectedItem as XML;
+				
+				parsePropsToObjectAndCopy();
+				
+				if (target.selectedItems.length >= 2 || !node1) return;
+				
 				var nodeName:String = String(node1.@name).split(":")[0];
 				text.text = nodeName + ":    " + node1.@type + "\nvalue:    " + fixPropName(dob[nodeName]);
 				//
@@ -398,7 +411,6 @@ package components
 		{
 			if (text && text.text.length && node1 && dob)
 			{
-				
 				var nodeName:String = String(node1.@name).split(":")[0];
 				
 				text.text = nodeName + ":    " + node1.@type + "\nvalue:    " + fixPropName(dob[nodeName]);
@@ -473,16 +485,28 @@ package components
 			}
 		}
 		
+		private var updatePropsListDelay:uint;
+		private const UPDATE_PROPS_LIST_DELAY_TIME:Number = 100;
+		
 		private function updatePropsList():void
 		{
-			var tempNodeName:String;
-			for each (var node:XML in tree1.dataProvider)
+			clearInterval(updatePropsListDelay);
+			updatePropsListDelay = setInterval(function():void
 			{
-				tempNodeName = String(node.@name).split(":")[0];
-				node.@name = fixPropName(tempNodeName + ": " + dob[tempNodeName]);
-				delete node.metadata;
-			}
-			tree1.invalidateList();
+				var tempNodeName:String;
+				for each (var node:XML in tree1.dataProvider)
+				{
+					tempNodeName = String(node.@name).split(":")[0];
+					node.@name = fixPropName(tempNodeName + ": " + dob[tempNodeName]);
+					delete node.metadata;
+				}
+				tree1.invalidateList();
+				clearInterval(updatePropsListDelay);
+				
+				tree1.visible = true;
+			
+			}, UPDATE_PROPS_LIST_DELAY_TIME);
+		
 		}
 		
 		private function fixPropName(value:String):String
@@ -490,6 +514,28 @@ package components
 			value = value.replace(/[\u000d\u000a\u0008\u0020]+/g, " ");
 			return value.length >= 30 ? value.slice(0, 30) + "..." : value;
 		}
+		
+		private function parsePropsToObjectAndCopy():void
+		{
+			var temp:Array;
+			var result:String = "{";
+			var value:String;
+			var valueTemp:*;
+			var flag:Boolean = false;
+			for each (var item:XML in tree1.selectedItems)
+			{
+				if (flag) result += ", ";
+				temp = item.@name.split(": ");
+				valueTemp = dob[temp[0]];
+				value = valueTemp is String ? JSON.stringify(valueTemp) : String(valueTemp);
+				result += temp[0] + ": " + value
+				flag = true;
+			}
+			result += "}";
+			
+			Clipboard.generalClipboard.setData(ClipboardFormats.TEXT_FORMAT, result);
+		}
 	
 	}
 }
+
