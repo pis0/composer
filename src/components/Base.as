@@ -24,10 +24,14 @@ package components
 	import spark.components.HSlider;
 	import spark.components.NumericStepper;
 	import spark.components.TextInput;
+	import spark.components.ToggleButton;
 	import spark.components.supportClasses.Range;
 	
 	public class Base extends Application
 	{
+		
+		[Embed(source = "../../lib/assets/playpauseicon.png")]
+		static private var playpauseicon:Class;
 		
 		static private const DEFAULT_DEFINITION:String = "starling.core::Starling";
 		static private const DEFAULT_METHODS:String = "current,stage";
@@ -37,13 +41,7 @@ package components
 			canvas.source = comp;
 			canvas.scaleContent = false;
 			
-			//var list0:XML = parseComp(comp, null);
 			stage.stage3Ds[0].addEventListener(Event.CONTEXT3D_CREATE, context3DCreate);
-		
-			//var list0:XML = parseComp(stage.stage3Ds[0].context3D, null);
-			//for (var key:String in childList) trace(key, childList[key]);
-			//tree0.dataProvider = list0;
-			//tree0.labelField = "@name";
 		}
 		
 		private var definition:String;
@@ -55,61 +53,41 @@ package components
 			container.removeElement(canvas);
 			this.x = 768;
 			container.percentWidth = 50;
-		
-			//definition = "starling.core::Starling";
-			//methods = "current,stage";
-		
-			//refresh(definition, methods);
 		}
 		
 		private function refresh(definition:String, methods:String = null):void
 		{
-			//var delay:uint = setInterval(function ():void 
-			//{				
-			//"starling.core::Starling"
-			//"com.assukar.praia.main.components::Main"
-			//"com.assukar.praia.hud.components::Hud"
-			//var clazz:Object = loader.contentLoaderInfo.applicationDomain.getDefinition("starling.core::Starling");
 			var clazz:Object = loader.contentLoaderInfo.applicationDomain.getDefinition(definition);
 			if (methods && methods.length)
 			{
 				var methodsTemp:Array = methods.split(",");
 				while (methodsTemp.length) clazz = clazz[methodsTemp.shift()];
 			}
-			//var list0:XML = parseComp(clazz["ME"], null);
 			var list0:XML = parseComp(clazz, null);
 			for (var key:String in childList) trace(key, childList[key]);
 			tree0.dataProvider = list0;
 			tree0.labelField = "@name";
-		
-			//Alert.show(loader.contentLoaderInfo.applicationDomain.getQualifiedDefinitionNames().toString());
-		
-			//clearInterval(delay);
-		
-			//}, 1000);		
-		
 		}
-		
-		//TODO to comment
-		//[Embed(source = "../../lib/lobby_malibu.swf")]
-		//private var connectMov:Class;
-		//private var conMov:MovieClipLoaderAsset = new connectMov();
-		//
-		
-		private var canvas:MovieClipSWFLoader;
-		private var container:HDividedBox;
-		
-		private var loader:Loader;
 		
 		public function Base()
 		{
 			addEventListener(FlexEvent.CREATION_COMPLETE, init, false, 0, true);
 		}
 		
+		private var refreshContainer:Group;
+		private var refreshDefinitionText:TextArea;
+		private var refreshMethodsText:TextArea;
+		private var refreshBtn:Button;
+		private var playPauseBtn:ToggleButton;
+		private var editorContainer:Group;
+		private var canvas:MovieClipSWFLoader;
+		private var container:HDividedBox
+		private var loader:Loader;
+		
 		private function init(e:FlexEvent):void
 		{
-			// container
 			
+			// container						
 			container = new HDividedBox();
 			container.percentWidth = container.percentHeight = 100;
 			
@@ -117,8 +95,8 @@ package components
 			
 			// left 
 			canvas = new MovieClipSWFLoader();
-			canvas.percentWidth = 50;
-			canvas.percentHeight = 100;
+			canvas.width = 768;
+			canvas.height = 1024;
 			
 			container.addElement(canvas);
 			
@@ -135,24 +113,34 @@ package components
 			refreshDefinitionText = new TextArea();
 			refreshDefinitionText.width = 300;
 			refreshDefinitionText.height = 20;
+			refreshDefinitionText.x = 4;
 			refreshDefinitionText.y = 4;
 			refreshDefinitionText.text = DEFAULT_DEFINITION;
 			
 			refreshMethodsText = new TextArea();
 			refreshMethodsText.width = 300;
 			refreshMethodsText.height = 20;
+			refreshMethodsText.x = 4;
 			refreshMethodsText.y = 28;
 			refreshMethodsText.text = DEFAULT_METHODS;
 			
 			refreshBtn = new Button();
 			refreshBtn.width = 80;
 			refreshBtn.height = 40;
+			refreshBtn.x = 4;
 			refreshBtn.y = 60;
 			refreshBtn.label = "APPLY";
+			
+			playPauseBtn = new ToggleButton();
+			playPauseBtn.width = 40;
+			playPauseBtn.height = 40;
+			playPauseBtn.x = 84;
+			playPauseBtn.y = 60;
 			
 			refreshContainer.addElement(refreshDefinitionText);
 			refreshContainer.addElement(refreshMethodsText);
 			refreshContainer.addElement(refreshBtn);
+			refreshContainer.addElement(playPauseBtn);
 			
 			tree0 = new Tree();
 			tree0.percentWidth = 100;
@@ -195,36 +183,51 @@ package components
 			tree0.addEventListener(ListEvent.CHANGE, treeChange);
 			tree1.addEventListener(ListEvent.CHANGE, treeChange);
 			
-			refreshBtn.addEventListener(MouseEvent.CLICK, buttonClick);
+			refreshBtn.addEventListener(MouseEvent.CLICK, refreshBtnClick);
 			refreshBtn.enabled = true;
 			
-			// TODO to comment 
-			//start(conMov);
+			playPauseBtn.addEventListener(MouseEvent.CLICK, playPauseBtnClick);
+			playPauseBtn.enabled = true;
+			
+			// skin
+			setSkinColor();
 			
 			// loader
 			load();
 		
 		}
 		
+		private function setSkinColor():void
+		{
+			this.setStyle("backgroundColor", 0x212121);
+			this.setStyle("contentBackgroundColor", 0x212121);
+			this.setStyle("chromeColor", 0xe4e4e4);
+			this.setStyle("color", 0x999999);
+			this.setStyle("selectionColor", 0xcccccc);
+			this.setStyle("focusColor", 0x666666);
+			this.setStyle("rollOverColor", 0x999999);
+			this.setStyle("symbolColor", 0x000000);
+			this.setStyle("focusedTextSelectionColor", 0x666666);
+			this.setStyle("unfocusedTextSelectionColor", 0x999999);
+			this.setStyle("inactiveTextSelectionColor", 0x333333);
+			this.styleManager.getStyleDeclaration("spark.components.Button").setStyle("color", 0x000000);
+			
+			playPauseBtn.setStyle("icon", playpauseicon);
+		}
+		
 		private function load():void
 		{
 			loader = new Loader();
 			loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loaderComplete);
-			//loader.load(new URLRequest("http://192.168.100.26/game/swf/LoaderSwf.swf"));
-			
-			//appDomain = new ApplicationDomain();
-			//loaderContext = new LoaderContext(false, appDomain)
-			//loader.load(new URLRequest("LoaderSwf.swf"), loaderContext);
 			loader.load(new URLRequest("LoaderSwf.swf"));
 		}
 		
 		private function loaderComplete(e:Event):void
 		{
-			//start(stage);
 			start(LoaderInfo(e.currentTarget).content);
 		}
 		
-		private function buttonClick(e:MouseEvent):void
+		private function refreshBtnClick(e:MouseEvent):void
 		{
 			refreshBtn.enabled = false;
 			try
@@ -235,8 +238,20 @@ package components
 			{
 				Alert.show(err.message);
 			}
-			
 			refreshBtn.enabled = true;
+		}
+		
+		private function playPauseBtnClick(e:MouseEvent):void
+		{
+			try
+			{
+				var starling:Object = loader.contentLoaderInfo.applicationDomain.getDefinition(DEFAULT_DEFINITION)["current"];
+				starling[playPauseBtn.selected ? "stop" : "start"]();
+			}
+			catch (e:Error)
+			{
+				Alert.show(e.message);
+			}
 		}
 		
 		private function getClassName(o:*):String
@@ -257,27 +272,10 @@ package components
 		
 		private function parseComp(dob:Object, result:XML = null):XML
 		{
-			//TODO to delete
-			//Alert.show(String(dob));
-			
-			//var namee:String = (dob.name ? dob.name : "") + int.MAX_VALUE * Math.random();
 			var namee:String;
 			var className:String = getClassName(dob);
-			//try
-			//{
-			//namee = (dob.name ? dob.name : getClassName(dob)) + ((dob.toString().search("object") != -1) ? dob.toString().replace("object ", "") : "") + "." + String(int.MAX_VALUE * Math.random()).split(".")[0];
 			namee = (dob.name ? dob.name : className != "null" ? className : String(dob)) + "." + String(int.MAX_VALUE * Math.random()).split(".")[0];
-			//namee = (dob.name ? dob.name : String(dob)) + "." + String(int.MAX_VALUE * Math.random()).split(".")[0];	 			
-			//}
-			//catch (err:Error)
-			//{
-			//namee = ((dob.toString().search("object") != -1) ? dob.toString().replace("object ", "") : "") + "." + String(int.MAX_VALUE * Math.random()).split(".")[0];
-			//namee = String(int.MAX_VALUE * Math.random()).split(".")[0];
-			//}
-			//finally
-			//{
-			//namee = String(int.MAX_VALUE * Math.random()).split(".")[0];				
-			//}
+			
 			childList[namee] = dob;
 			
 			if (!result) result = <data></data>;
@@ -287,7 +285,6 @@ package components
 			
 			if (dob.hasOwnProperty("numChildren"))
 			{
-				//var container:DisplayObjectContainer = DisplayObjectContainer(dob);
 				var i:int, len:int = dob.numChildren;
 				for (i = 0; i < len; i++) parseComp(dob.getChildAt(i), nodeTemp);
 			}
@@ -320,9 +317,26 @@ package components
 				//	
 				tree1.dataProvider = describeType(dob)..accessor.( //
 				//(@declaredBy == "flash.display::DisplayObject" || @declaredBy == "flash.display::DisplayObjectContainer" || @declaredBy == "flash.display::Sprite") //
-				(@declaredBy == "starling.display::DisplayObject" || @declaredBy == "starling.display::DisplayObjectContainer" || @declaredBy == "starling.display::Sprite" || @declaredBy == "starling.text::TextField") //
+				( //
+				@declaredBy == "starling.display::DisplayObject"  //
+				|| @declaredBy == "starling.display::DisplayObjectContainer" //
+				|| @declaredBy == "starling.display::Image" //
+				|| @declaredBy == "starling.display::Sprite" //
+				|| @declaredBy == "starling.display::Sprite3D" //
+				|| @declaredBy == "starling.text::TextField" //
+				//
+				|| @declaredBy == "com.assukar.view.starling::Component" // Custom
+				|| @declaredBy == "com.assukar.view.starling::AssukarTextField" // Custom
+				|| @declaredBy == "com.assukar.view.starling::AssukarMovieClip" // Custom
+				|| @declaredBy == "com.assukar.view.starling::AssukarMovieBytes" // Custom
+				) //
 				&& @access == "readwrite" //
-				&& (@type == "Number" || @type == "Boolean" || @type == "String")); //
+				&& ( //
+				@type == "int" //
+				|| @type == "Number" //
+				|| @type == "Boolean" //
+				|| @type == "String" //
+				)); //
 				//&& @name != "name");
 				//				
 				for each (var node:XML in tree1.dataProvider) delete node.metadata;
@@ -343,13 +357,6 @@ package components
 			}
 		
 		}
-		
-		private var refreshContainer:Group;
-		private var refreshDefinitionText:TextArea;
-		private var refreshMethodsText:TextArea;
-		private var refreshBtn:Button;
-		
-		private var editorContainer:Group;
 		
 		private function canvasChange(e:Event):void
 		{
