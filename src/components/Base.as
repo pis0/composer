@@ -354,6 +354,7 @@ package components
 				|| @declaredBy == "starling.text::TextField" //
 				//
 				|| @declaredBy == "com.assukar.view.starling::Component" // Custom
+				|| @declaredBy == "com.assukar.view.starling::EffectableComponent" // Custom
 				|| @declaredBy == "com.assukar.view.starling::AssukarTextField" // Custom 
 				|| @declaredBy == "com.assukar.view.starling::AssukarMovieClip" // Custom
 				|| @declaredBy == "com.assukar.view.starling::AssukarMovieBytes" // Custom
