@@ -6,8 +6,11 @@ package components
 	import flash.display.Loader;
 	import flash.display.LoaderInfo;
 	import flash.events.Event;
+	import flash.events.IOErrorEvent;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
+	import flash.net.URLLoader;
+	import flash.net.URLLoaderDataFormat;
 	import flash.net.URLRequest;
 	import flash.utils.Dictionary;
 	import flash.utils.clearInterval;
@@ -244,9 +247,25 @@ package components
 		
 		private function load():void
 		{
-			loader = new Loader();
-			loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loaderComplete);
-			loader.load(new URLRequest("LoaderSwf.swf"));
+			
+			var configLoader:URLLoader = new URLLoader();	
+			configLoader.dataFormat = URLLoaderDataFormat.VARIABLES;
+			configLoader.addEventListener(Event.COMPLETE, function (e:Event):void 
+			{				
+				loader = new Loader();
+				loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loaderComplete);
+				loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, function (ioe:IOErrorEvent):void 
+				{
+					Alert.show(ioe.text);
+				});
+				//loader.load(new URLRequest("LoaderSwf.swf"));				
+				loader.load(new URLRequest(configLoader.data["path"]));
+				
+				
+			});
+			configLoader.load(new URLRequest("_COMPOSER.config"));
+			
+			
 		}
 		
 		private function loaderComplete(e:Event):void
