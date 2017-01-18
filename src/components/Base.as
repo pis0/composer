@@ -6,8 +6,11 @@ package components
 	import flash.display.Loader;
 	import flash.display.LoaderInfo;
 	import flash.events.Event;
+	import flash.events.IOErrorEvent;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
+	import flash.net.URLLoader;
+	import flash.net.URLLoaderDataFormat;
 	import flash.net.URLRequest;
 	import flash.utils.Dictionary;
 	import flash.utils.clearInterval;
@@ -17,6 +20,8 @@ package components
 	import mx.containers.HDividedBox;
 	import mx.containers.VDividedBox;
 	import mx.controls.Alert;
+	import mx.controls.ColorPicker;
+	import mx.controls.ComboBase;
 	import mx.controls.MovieClipSWFLoader;
 	import mx.controls.TextArea;
 	import mx.controls.Tree;
@@ -242,9 +247,25 @@ package components
 		
 		private function load():void
 		{
-			loader = new Loader();
-			loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loaderComplete);
-			loader.load(new URLRequest("LoaderSwf.swf"));
+			
+			var configLoader:URLLoader = new URLLoader();	
+			configLoader.dataFormat = URLLoaderDataFormat.VARIABLES;
+			configLoader.addEventListener(Event.COMPLETE, function (e:Event):void 
+			{				
+				loader = new Loader();
+				loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loaderComplete);
+				loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, function (ioe:IOErrorEvent):void 
+				{
+					Alert.show(ioe.text);
+				});
+				//loader.load(new URLRequest("LoaderSwf.swf"));				
+				loader.load(new URLRequest(configLoader.data["path"]));
+				
+				
+			});
+			configLoader.load(new URLRequest("_COMPOSER.config"));
+			
+			
 		}
 		
 		private function loaderComplete(e:Event):void
@@ -361,7 +382,8 @@ package components
 				) //
 				&& @access == "readwrite") // || name() == "variable" //
 				).( //
-				@type == "int" //
+				@type == "uint" //
+				|| @type == "int" //
 				|| @type == "Number" //
 				|| @type == "Boolean" //
 				|| @type == "String" //
@@ -387,7 +409,7 @@ package components
 				if (target.selectedItems.length >= 2 || !node1) return;
 				
 				var nodeName:String = String(node1.@name).split(":")[0];
-				text.text = nodeName + ":    " + node1.@type + "\nvalue:    " + fixPropName(dob[nodeName]);
+				text.text = nodeName + ":    " + node1.@type + "\nvalue:    " + (nodeName == "color" ? "0x" + uint(dob[nodeName]).toString(16) : fixPropName(dob[nodeName]));	 			
 				//
 				canvas.addEventListener(Event.ENTER_FRAME, canvasChange);
 				editorContainer.addElement(text);
@@ -422,12 +444,12 @@ package components
 			{
 				var nodeName:String = String(node1.@name).split(":")[0];
 				
-				text.text = nodeName + ":    " + node1.@type + "\nvalue:    " + fixPropName(dob[nodeName]);
+				text.text = nodeName + ":    " + node1.@type + "\nvalue:    " + (nodeName == "color" ? "0x" + uint(dob[nodeName]).toString(16) : fixPropName(dob[nodeName]));				
 				
 				if (editorContainer.numElements <= 1)
 				{
 					var input:*;
-					if (node1.@type == "Number" || node1.@type == "int")
+					if (node1.@type == "Number")
 					{
 						if (nodeName == "alpha")
 						{
@@ -446,6 +468,33 @@ package components
 						}
 						
 						Range(input).value = Number(dob[nodeName]);
+					}
+					else if (node1.@type == "int")
+					{
+						input = new NumericStepper();
+						NumericStepper(input).minimum = -int.MAX_VALUE;
+						NumericStepper(input).maximum = int.MAX_VALUE;
+						NumericStepper(input).stepSize = 1.0;
+						
+						Range(input).value = Number(dob[nodeName]);
+					}
+					else if (node1.@type == "uint")
+					{
+						if (nodeName == "color")
+						{
+							input = new ColorPicker();
+							ColorPicker(input).showTextField = true;
+							ColorPicker(input).selectedColor = uint(dob[nodeName]);
+						}
+						else
+						{
+							input = new NumericStepper();
+							NumericStepper(input).minimum = 0;
+							NumericStepper(input).maximum = int.MAX_VALUE;
+							NumericStepper(input).stepSize = 1.0;
+							
+							Range(input).value = Number(dob[nodeName]);
+						}
 					}
 					else if (node1.@type == "Boolean")
 					{
@@ -482,10 +531,16 @@ package components
 								dob[nodeName] = TextInput(input).text;
 								updatePropsList();
 							}
+							else if (e.currentTarget is ComboBase)
+							{
+								dob[nodeName] = ColorPicker(input).selectedColor;
+								updatePropsList();
+							}
 						}
 						catch (err:Error)
 						{
-							Alert.show(err.message);
+							//Alert.show(err.message);
+							trace(err.message);
 						}
 					});
 					
@@ -506,7 +561,12 @@ package components
 				for each (var node:XML in tree1.dataProvider)
 				{
 					tempNodeName = String(node.@name).split(":")[0];
-					node.@name = fixPropName(tempNodeName + ": " + dob[tempNodeName]);
+					
+					if (tempNodeName == "color")
+					{
+						node.@name = tempNodeName + ": 0x" + uint(dob[tempNodeName]).toString(16); 
+					}
+					else node.@name = fixPropName(tempNodeName + ": " + dob[tempNodeName]);
 					delete node.metadata;
 				}
 				tree1.invalidateList();
