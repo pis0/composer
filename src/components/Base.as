@@ -50,19 +50,17 @@ package components
 		static private const DEFAULT_METHODS:String = "current,stage";
 		
 		public function start(comp:Object):void
-		{
+		{						
 			canvas.source = comp;
-			canvas.scaleContent = false;
-			
-			stage.stage3Ds[0].addEventListener(Event.CONTEXT3D_CREATE, context3DCreate);
+			canvas.scaleContent = false;			
+			stage.stage3Ds[0].addEventListener(Event.CONTEXT3D_CREATE, context3DCreate);				
 		}
 		
 		private var definition:String;
 		private var methods:String;
 		
 		private function context3DCreate(e:Event):void
-		{
-			
+		{			
 			container.removeElement(canvas);
 			this.x = 768;
 			container.percentWidth = 50;
@@ -269,7 +267,7 @@ package components
 		}
 		
 		private function loaderComplete(e:Event):void
-		{
+		{		
 			start(LoaderInfo(e.currentTarget).content);
 		}
 		

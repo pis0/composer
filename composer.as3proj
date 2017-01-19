@@ -4,7 +4,7 @@
   <output>
     <movie outputType="Application" />
     <movie input="" />
-    <movie path="..\Praia\dev\static\praia\game\swf\_COMPOSER.swf" />
+    <movie path="bin\_COMPOSER.swf" />
     <movie fps="60" />
     <movie width="1536" />
     <movie height="1024" />
@@ -16,16 +16,16 @@
   </output>
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
-    <class path="src" />
-    <class path="..\_starling\release\starling\src" />
-    <class path="..\Assukar\dev\client\airong\src" />
     <class path="..\Assukar\dev\client\libs" />
     <class path="..\Assukar\dev\client\view\src" />
+    <class path="..\_starling\release\starling\src" />
+    <class path="..\Assukar\dev\client\airong\src" />
+    <class path="src" />
   </classpaths>
   <!-- Build options -->
   <build>
     <option accessible="False" />
-    <option advancedTelemetry="False" />
+    <option advancedTelemetry="True" />
     <option allowSourcePathOverlap="False" />
     <option benchmark="False" />
     <option es="False" />
@@ -47,7 +47,7 @@
     <option linkReport="" />
     <option loadExterns="" />
     <option staticLinkRSL="True" />
-    <option additional="-define+=CONFIG::DEBUG,false" />
+    <option additional="-define+=CONFIG::DEBUG,true" />
     <option compilerConstants="" />
     <option minorVersion="" />
   </build>
