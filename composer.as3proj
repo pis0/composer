@@ -25,7 +25,7 @@
   <!-- Build options -->
   <build>
     <option accessible="False" />
-    <option advancedTelemetry="True" />
+    <option advancedTelemetry="False" />
     <option allowSourcePathOverlap="False" />
     <option benchmark="False" />
     <option es="False" />
@@ -47,7 +47,7 @@
     <option linkReport="" />
     <option loadExterns="" />
     <option staticLinkRSL="True" />
-    <option additional="-define+=CONFIG::DEBUG,true" />
+    <option additional="-define+=CONFIG::DEBUG,false" />
     <option compilerConstants="" />
     <option minorVersion="" />
   </build>
