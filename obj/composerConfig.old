@@ -36,8 +36,8 @@
     <source-path append="true">
       <path-element>E:\workspace\Assukar\dev\client\libs</path-element>
       <path-element>E:\workspace\Assukar\dev\client\view\src</path-element>
-      <path-element>E:\workspace\_starling\release\starling\src</path-element>
       <path-element>E:\workspace\Assukar\dev\client\airong\src</path-element>
+      <path-element>E:\workspace\_starling\release\starling\src</path-element>
       <path-element>E:\workspace\_composer\src</path-element>
       <path-element>C:\Program Files (x86)\FlashDevelop\Library\AS3\classes</path-element>
     </source-path>

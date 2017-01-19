@@ -4,7 +4,7 @@
   <output>
     <movie outputType="Application" />
     <movie input="" />
-    <movie path="bin\_COMPOSER.swf" />
+    <movie path="..\Praia\dev\static\praia\game\swf\_COMPOSER.swf" />
     <movie fps="60" />
     <movie width="1536" />
     <movie height="1024" />
@@ -18,8 +18,8 @@
   <classpaths>
     <class path="..\Assukar\dev\client\libs" />
     <class path="..\Assukar\dev\client\view\src" />
-    <class path="..\_starling\release\starling\src" />
     <class path="..\Assukar\dev\client\airong\src" />
+    <class path="..\_starling\release\starling\src" />
     <class path="src" />
   </classpaths>
   <!-- Build options -->

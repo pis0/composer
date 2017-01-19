@@ -371,6 +371,8 @@ package components
 				|| @declaredBy == "starling.display::Sprite" //
 				|| @declaredBy == "starling.display::Sprite3D" //
 				|| @declaredBy == "starling.text::TextField" //
+				|| @declaredBy == "starling.extensions::ParticleSystem" //
+				|| @declaredBy == "starling.extensions::PDParticleSystem" //
 				//
 				|| @declaredBy == "com.assukar.view.starling::Component" // Custom
 				|| @declaredBy == "com.assukar.view.starling::EffectableComponent" // Custom
@@ -564,7 +566,8 @@ package components
 					{
 						node.@name = tempNodeName + ": 0x" + uint(dob[tempNodeName]).toString(16); 
 					}
-					else node.@name = fixPropName(tempNodeName + ": " + dob[tempNodeName]);
+					//else node.@name = fixPropName(tempNodeName + ": " + dob[tempNodeName]);
+					else node.@name = tempNodeName + ": " + fixPropName(String(dob[tempNodeName]));
 					delete node.metadata;
 				}
 				tree1.invalidateList();
