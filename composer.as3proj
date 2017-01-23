@@ -16,11 +16,14 @@
   </output>
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
+    <class path="src" />
     <class path="..\Assukar\dev\client\libs" />
     <class path="..\Assukar\dev\client\view\src" />
     <class path="..\Assukar\dev\client\airong\src" />
+    <class path="..\Assukar\dev\client\domain\src" />
+    <class path="..\Assukar\dev\client\engine\src" />
     <class path="..\_starling\release\starling\src" />
-    <class path="src" />
+    <class path="..\Praia\dev\client\domain\src" />
   </classpaths>
   <!-- Build options -->
   <build>
@@ -47,7 +50,7 @@
     <option linkReport="" />
     <option loadExterns="" />
     <option staticLinkRSL="True" />
-    <option additional="-define+=CONFIG::DEBUG,false" />
+    <option additional="-define+=CONFIG::DEBUG,false&#xA;-define+=CONFIG::FORCE_MOBILE,false" />
     <option compilerConstants="" />
     <option minorVersion="" />
   </build>
@@ -58,6 +61,7 @@
   <!-- SWC Libraries -->
   <libraryPaths>
     <element path="..\Assukar\dev\client\libs\as3-signals.swc" />
+    <element path="..\Assukar\dev\client\libs\MinimalComps.swc" />
   </libraryPaths>
   <!-- External Libraries -->
   <externalLibraryPaths>

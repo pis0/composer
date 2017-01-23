@@ -8,15 +8,15 @@
   <compiler>
     <define append="true">
       <name>CONFIG::debug</name>
-      <value>false</value>
-    </define>
-    <define append="true">
-      <name>CONFIG::release</name>
       <value>true</value>
     </define>
     <define append="true">
+      <name>CONFIG::release</name>
+      <value>false</value>
+    </define>
+    <define append="true">
       <name>CONFIG::timeStamp</name>
-      <value>'19/01/2017'</value>
+      <value>'23/01/2017'</value>
     </define>
     <define append="true">
       <name>CONFIG::air</name>
@@ -30,19 +30,21 @@
       <name>CONFIG::desktop</name>
       <value>false</value>
     </define>
-    <optimize>true</optimize>
-    <omit-trace-statements>true</omit-trace-statements>
-    <verbose-stacktraces>false</verbose-stacktraces>
+    <verbose-stacktraces>true</verbose-stacktraces>
     <source-path append="true">
+      <path-element>E:\workspace\_composer\src</path-element>
       <path-element>E:\workspace\Assukar\dev\client\libs</path-element>
       <path-element>E:\workspace\Assukar\dev\client\view\src</path-element>
       <path-element>E:\workspace\Assukar\dev\client\airong\src</path-element>
+      <path-element>E:\workspace\Assukar\dev\client\domain\src</path-element>
+      <path-element>E:\workspace\Assukar\dev\client\engine\src</path-element>
       <path-element>E:\workspace\_starling\release\starling\src</path-element>
-      <path-element>E:\workspace\_composer\src</path-element>
+      <path-element>E:\workspace\Praia\dev\client\domain\src</path-element>
       <path-element>C:\Program Files (x86)\FlashDevelop\Library\AS3\classes</path-element>
     </source-path>
     <library-path append="true">
       <path-element>E:\workspace\Assukar\dev\client\libs\as3-signals.swc</path-element>
+      <path-element>E:\workspace\Assukar\dev\client\libs\MinimalComps.swc</path-element>
     </library-path>
   </compiler>
   <file-specs>

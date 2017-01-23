@@ -1,6 +1,8 @@
 package components
 {
 	
+	import com.assukar.airong.utils.Utils;
+	import com.assukar.view.starling.Component;
 	import flash.desktop.Clipboard;
 	import flash.desktop.ClipboardFormats;
 	import flash.display.Loader;
@@ -12,6 +14,8 @@ package components
 	import flash.net.URLLoader;
 	import flash.net.URLLoaderDataFormat;
 	import flash.net.URLRequest;
+	import flash.system.ApplicationDomain;
+	import flash.system.LoaderContext;
 	import flash.utils.Dictionary;
 	import flash.utils.clearInterval;
 	import flash.utils.describeType;
@@ -36,12 +40,17 @@ package components
 	import spark.components.TextInput;
 	import spark.components.ToggleButton;
 	import spark.components.supportClasses.Range;
+	import starling.animation.easing.Quad;
+	import starling.core.Starling;
 	import starling.display.DisplayObject;
+	import starling.display.DisplayObjectContainer;
 	import starling.events.Touch;
 	import starling.events.TouchEvent;
 	
 	public class Base extends Application
 	{
+		
+		static private var APPLICATION_DOMAIN:ApplicationDomain = ApplicationDomain.currentDomain;
 		
 		[Embed(source = "../../lib/assets/playpauseicon.png")]
 		static private var playpauseicon:Class;
@@ -50,17 +59,17 @@ package components
 		static private const DEFAULT_METHODS:String = "current,stage";
 		
 		public function start(comp:Object):void
-		{						
+		{
 			canvas.source = comp;
-			canvas.scaleContent = false;			
-			stage.stage3Ds[0].addEventListener(Event.CONTEXT3D_CREATE, context3DCreate);				
+			canvas.scaleContent = false;
+			stage.stage3Ds[0].addEventListener(Event.CONTEXT3D_CREATE, context3DCreate);
 		}
 		
 		private var definition:String;
 		private var methods:String;
 		
 		private function context3DCreate(e:Event):void
-		{			
+		{
 			container.removeElement(canvas);
 			this.x = 768;
 			container.percentWidth = 50;
@@ -68,6 +77,9 @@ package components
 		
 		private function refresh(definition:String, methods:String = null):void
 		{
+			
+			clearLayer();
+			
 			var clazz:Object = loader.contentLoaderInfo.applicationDomain.getDefinition(definition);
 			if (methods && methods.length)
 			{
@@ -85,6 +97,12 @@ package components
 			addEventListener(FlexEvent.CREATION_COMPLETE, init, false, 0, true);
 		}
 		
+		private function init(e:FlexEvent):void
+		{
+			removeEventListener(FlexEvent.CREATION_COMPLETE, init);
+			addEventListener(Event.ADDED_TO_STAGE, hasStage, false, 0, true);
+		}
+		
 		private var refreshContainer:Group;
 		private var refreshDefinitionText:TextArea;
 		private var refreshMethodsText:TextArea;
@@ -97,8 +115,9 @@ package components
 		
 		private var cursorPosition:TextArea;
 		
-		private function init(e:FlexEvent):void
+		private function hasStage(e:Event):void
 		{
+			removeEventListener(Event.ADDED_TO_STAGE, hasStage);
 			
 			// container						
 			container = new HDividedBox();
@@ -204,7 +223,10 @@ package components
 			box1.addElement(editorContainer);
 			
 			// events
+			tree0.doubleClickEnabled = true;
 			tree0.addEventListener(ListEvent.CHANGE, treeChange);
+			tree0.addEventListener(MouseEvent.DOUBLE_CLICK, drawObject);
+			
 			tree1.addEventListener(ListEvent.CHANGE, treeChange);
 			tree1.allowMultipleSelection = true;
 			
@@ -221,6 +243,50 @@ package components
 			load();
 		
 		}
+		
+		private var layer:Component = null;
+		private var starlingg:Object = null;
+		
+		private function clearLayer():void
+		{
+			if (!starlingg) starlingg = loader.contentLoaderInfo.applicationDomain.getDefinition(DEFAULT_DEFINITION)["current"];
+			
+			if (layer) 
+			{
+				layer.removeChildren(0, -1, true);
+				layer.dispose();				
+				if (Starling(starlingg).stage.contains(layer)) Starling(starlingg).stage.removeChild(layer);
+			}
+		}
+		
+		private function drawObject(e:MouseEvent):void
+		{
+			try
+			{				
+				clearLayer();			
+				
+				layer = new Component();
+				layer.name = "INDIVIDUAL_LAYER";		
+				layer.addQuad(768, 1024, 0xe1e1e1, { alpha: 0.95 } );
+				layer.touchable = true;
+				
+				Starling(starlingg).stage.addChild(layer);	
+				
+				var clazz:Object = loader.contentLoaderInfo.applicationDomain.getDefinition(getQualifiedClassName(dob));
+				layer.addComp(clazz);  
+				
+				var list0:XML = parseComp(layer.getChildAt(1), null);   
+				tree0.dataProvider = list0;
+				tree0.labelField = "@name";
+				tree0.invalidateList();
+				
+			}
+			catch (e:Error)
+			{
+				Alert.show(e.message);
+				clearLayer();
+			}		
+		}		
 		
 		private function setSkinColor():void
 		{
@@ -246,28 +312,27 @@ package components
 		private function load():void
 		{
 			
-			var configLoader:URLLoader = new URLLoader();	
+			var configLoader:URLLoader = new URLLoader();
 			configLoader.dataFormat = URLLoaderDataFormat.VARIABLES;
-			configLoader.addEventListener(Event.COMPLETE, function (e:Event):void 
-			{				
+			configLoader.addEventListener(Event.COMPLETE, function(e:Event):void
+			{
 				loader = new Loader();
 				loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loaderComplete);
-				loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, function (ioe:IOErrorEvent):void 
+				loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, function(ioe:IOErrorEvent):void
 				{
 					Alert.show(ioe.text);
 				});
 				//loader.load(new URLRequest("LoaderSwf.swf"));				
-				loader.load(new URLRequest(configLoader.data["path"]));
-				
-				
+				//loader.load(new URLRequest(configLoader.data["path"]));
+				loader.load(new URLRequest(configLoader.data["path"]), new LoaderContext(false, APPLICATION_DOMAIN));
+			
 			});
 			configLoader.load(new URLRequest("_COMPOSER.config"));
-			
-			
+		
 		}
 		
 		private function loaderComplete(e:Event):void
-		{		
+		{
 			start(LoaderInfo(e.currentTarget).content);
 		}
 		
@@ -396,8 +461,11 @@ package components
 				tree1.labelField = "@name";
 				
 				// global / local positions
-				if (DisplayObject(dob).hasEventListener(TouchEvent.TOUCH)) DisplayObject(dob).removeEventListener(TouchEvent.TOUCH, updatePositionsDisplay);
-				dob.addEventListener(TouchEvent.TOUCH, updatePositionsDisplay);
+				if (dob is DisplayObject)
+				{
+					if(DisplayObject(dob).hasEventListener(TouchEvent.TOUCH)) DisplayObject(dob).removeEventListener(TouchEvent.TOUCH, updatePositionsDisplay);
+					dob.addEventListener(TouchEvent.TOUCH, updatePositionsDisplay);
+				}
 				
 				break;
 			case "tree1":
@@ -409,7 +477,7 @@ package components
 				if (target.selectedItems.length >= 2 || !node1) return;
 				
 				var nodeName:String = String(node1.@name).split(":")[0];
-				text.text = nodeName + ":    " + node1.@type + "\nvalue:    " + (nodeName == "color" ? "0x" + uint(dob[nodeName]).toString(16) : fixPropName(dob[nodeName]));	 			
+				text.text = nodeName + ":    " + node1.@type + "\nvalue:    " + (nodeName == "color" ? "0x" + uint(dob[nodeName]).toString(16) : fixPropName(dob[nodeName]));
 				//
 				canvas.addEventListener(Event.ENTER_FRAME, canvasChange);
 				editorContainer.addElement(text);
@@ -444,7 +512,7 @@ package components
 			{
 				var nodeName:String = String(node1.@name).split(":")[0];
 				
-				text.text = nodeName + ":    " + node1.@type + "\nvalue:    " + (nodeName == "color" ? "0x" + uint(dob[nodeName]).toString(16) : fixPropName(dob[nodeName]));				
+				text.text = nodeName + ":    " + node1.@type + "\nvalue:    " + (nodeName == "color" ? "0x" + uint(dob[nodeName]).toString(16) : fixPropName(dob[nodeName]));
 				
 				if (editorContainer.numElements <= 1)
 				{
@@ -564,7 +632,7 @@ package components
 					
 					if (tempNodeName == "color")
 					{
-						node.@name = tempNodeName + ": 0x" + uint(dob[tempNodeName]).toString(16); 
+						node.@name = tempNodeName + ": 0x" + uint(dob[tempNodeName]).toString(16);
 					}
 					//else node.@name = fixPropName(tempNodeName + ": " + dob[tempNodeName]);
 					else node.@name = tempNodeName + ": " + fixPropName(String(dob[tempNodeName]));
