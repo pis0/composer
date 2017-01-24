@@ -50,6 +50,7 @@ package components
 	public class Base extends Application
 	{
 		
+		
 		static private var APPLICATION_DOMAIN:ApplicationDomain = ApplicationDomain.currentDomain;
 		
 		[Embed(source = "../../lib/assets/playpauseicon.png")]
@@ -117,7 +118,7 @@ package components
 		
 		private function hasStage(e:Event):void
 		{
-			removeEventListener(Event.ADDED_TO_STAGE, hasStage);
+			removeEventListener(Event.ADDED_TO_STAGE, hasStage);			
 			
 			// container						
 			container = new HDividedBox();
@@ -283,7 +284,7 @@ package components
 			}
 			catch (e:Error)
 			{
-				Alert.show(e.message);
+				Alert.show(e.message, "", 4, tree0);				
 				clearLayer();
 			}		
 		}		
@@ -320,7 +321,8 @@ package components
 				loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loaderComplete);
 				loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, function(ioe:IOErrorEvent):void
 				{
-					Alert.show(ioe.text);
+					//Alert.show(ioe.text);
+					Alert.show(ioe.text, "", 4, tree0);
 				});
 				//loader.load(new URLRequest("LoaderSwf.swf"));				
 				//loader.load(new URLRequest(configLoader.data["path"]));
@@ -345,7 +347,8 @@ package components
 			}
 			catch (err:Error)
 			{
-				Alert.show(err.message);
+				//Alert.show(err.message);
+				Alert.show(err.message, "", 4, tree0);
 			}
 			refreshBtn.enabled = true;
 		}
@@ -359,7 +362,8 @@ package components
 			}
 			catch (e:Error)
 			{
-				Alert.show(e.message);
+				//Alert.show(e.message);
+				Alert.show(e.message, "", 4, tree0);
 			}
 		}
 		
