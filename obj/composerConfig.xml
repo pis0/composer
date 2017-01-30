@@ -16,7 +16,7 @@
     </define>
     <define append="true">
       <name>CONFIG::timeStamp</name>
-      <value>'25/01/2017'</value>
+      <value>'30/01/2017'</value>
     </define>
     <define append="true">
       <name>CONFIG::air</name>
@@ -36,12 +36,9 @@
     <source-path append="true">
       <path-element>E:\workspace\_composer\src</path-element>
       <path-element>E:\workspace\Assukar\dev\client\libs</path-element>
-      <path-element>E:\workspace\Assukar\dev\client\view\src</path-element>
+      <path-element>E:\workspace\_starling\1.8\starling\src</path-element>
       <path-element>E:\workspace\Assukar\dev\client\airong\src</path-element>
-      <path-element>E:\workspace\Assukar\dev\client\domain\src</path-element>
-      <path-element>E:\workspace\Assukar\dev\client\engine\src</path-element>
-      <path-element>E:\workspace\_starling\release\starling\src</path-element>
-      <path-element>E:\workspace\Praia\dev\client\domain\src</path-element>
+      <path-element>E:\workspace\Assukar\dev\client\view\src</path-element>
       <path-element>C:\Program Files (x86)\FlashDevelop\Library\AS3\classes</path-element>
     </source-path>
     <library-path append="true">

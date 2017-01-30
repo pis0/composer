@@ -1,8 +1,6 @@
 package components
 {
 	
-	import com.assukar.airong.utils.Utils;
-	import com.assukar.view.starling.Component;
 	import flash.desktop.Clipboard;
 	import flash.desktop.ClipboardFormats;
 	import flash.display.Loader;
@@ -40,16 +38,15 @@ package components
 	import spark.components.TextInput;
 	import spark.components.ToggleButton;
 	import spark.components.supportClasses.Range;
-	import starling.animation.easing.Quad;
 	import starling.core.Starling;
 	import starling.display.DisplayObject;
-	import starling.display.DisplayObjectContainer;
+	import starling.display.Quad;
+	import starling.display.Sprite;
 	import starling.events.Touch;
 	import starling.events.TouchEvent;
 	
 	public class Base extends Application
 	{
-		
 		
 		static private var APPLICATION_DOMAIN:ApplicationDomain = ApplicationDomain.currentDomain;
 		
@@ -118,7 +115,7 @@ package components
 		
 		private function hasStage(e:Event):void
 		{
-			removeEventListener(Event.ADDED_TO_STAGE, hasStage);			
+			removeEventListener(Event.ADDED_TO_STAGE, hasStage);
 			
 			// container						
 			container = new HDividedBox();
@@ -245,17 +242,18 @@ package components
 		
 		}
 		
-		private var layer:Component = null;
+		//private var layer:Component = null;
+		private var layer:Sprite = null;
 		private var starlingg:Object = null;
 		
 		private function clearLayer():void
 		{
 			if (!starlingg) starlingg = loader.contentLoaderInfo.applicationDomain.getDefinition(DEFAULT_DEFINITION)["current"];
 			
-			if (layer) 
+			if (layer)
 			{
 				layer.removeChildren(0, -1, true);
-				layer.dispose();				
+				layer.dispose();
 				if (Starling(starlingg).stage.contains(layer)) Starling(starlingg).stage.removeChild(layer);
 			}
 		}
@@ -263,20 +261,24 @@ package components
 		private function drawObject(e:MouseEvent):void
 		{
 			try
-			{				
-				clearLayer();			
+			{
+				clearLayer();
 				
-				layer = new Component();
-				layer.name = "INDIVIDUAL_LAYER";		
-				layer.addQuad(768, 1024, 0xe1e1e1, { alpha: 0.95 } );
+				//layer = new Component();
+				layer = new Sprite();
+				layer.name = "INDIVIDUAL_LAYER";
+				
+				var layerBg:Quad = new Quad(768, 1024, 0xe1e1e1);
+				layerBg.alpha = 0.95;
+				layer.addChild(layerBg);
 				layer.touchable = true;
 				
-				Starling(starlingg).stage.addChild(layer);	
+				Starling(starlingg).stage.addChild(layer);
 				
 				var clazz:Object = loader.contentLoaderInfo.applicationDomain.getDefinition(getQualifiedClassName(dob));
-				layer.addComp(clazz);  
+				layer.addChild((new clazz())["draw"]());
 				
-				var list0:XML = parseComp(layer.getChildAt(1), null);   
+				var list0:XML = parseComp(layer.getChildAt(1), null);
 				tree0.dataProvider = list0;
 				tree0.labelField = "@name";
 				tree0.invalidateList();
@@ -284,10 +286,10 @@ package components
 			}
 			catch (e:Error)
 			{
-				Alert.show(e.message, "", 4, tree0);				
+				Alert.show(e.message, "", 4, tree0);
 				clearLayer();
-			}		
-		}		
+			}
+		}
 		
 		private function setSkinColor():void
 		{
@@ -467,7 +469,7 @@ package components
 				// global / local positions
 				if (dob is DisplayObject)
 				{
-					if(DisplayObject(dob).hasEventListener(TouchEvent.TOUCH)) DisplayObject(dob).removeEventListener(TouchEvent.TOUCH, updatePositionsDisplay);
+					if (DisplayObject(dob).hasEventListener(TouchEvent.TOUCH)) DisplayObject(dob).removeEventListener(TouchEvent.TOUCH, updatePositionsDisplay);
 					dob.addEventListener(TouchEvent.TOUCH, updatePositionsDisplay);
 				}
 				

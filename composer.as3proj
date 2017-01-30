@@ -18,12 +18,9 @@
   <classpaths>
     <class path="src" />
     <class path="..\Assukar\dev\client\libs" />
-    <class path="..\Assukar\dev\client\view\src" />
+    <class path="..\_starling\1.8\starling\src" />
     <class path="..\Assukar\dev\client\airong\src" />
-    <class path="..\Assukar\dev\client\domain\src" />
-    <class path="..\Assukar\dev\client\engine\src" />
-    <class path="..\_starling\release\starling\src" />
-    <class path="..\Praia\dev\client\domain\src" />
+    <class path="..\Assukar\dev\client\view\src" />
   </classpaths>
   <!-- Build options -->
   <build>
