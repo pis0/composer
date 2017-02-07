@@ -60,6 +60,8 @@ package components
 		{
 			canvas.source = comp;
 			canvas.scaleContent = false;
+			
+			stage.color = 0x0000;
 			stage.stage3Ds[0].addEventListener(Event.CONTEXT3D_CREATE, context3DCreate);
 		}
 		
@@ -69,8 +71,8 @@ package components
 		private function context3DCreate(e:Event):void
 		{
 			container.removeElement(canvas);
-			this.x = 768;
-			container.percentWidth = 50;
+			this.x = orientation == 1 ? 1024 : 768;
+			container.percentWidth = orientation == 1 ? 34 : 50;
 		}
 		
 		private function refresh(definition:String, methods:String = null):void
@@ -107,6 +109,7 @@ package components
 		private var refreshBtn:Button;
 		private var playPauseBtn:ToggleButton;
 		private var editorContainer:Group;
+		private var editorStepSize:TextInput;
 		private var canvas:MovieClipSWFLoader;
 		private var container:HDividedBox
 		private var loader:Loader;
@@ -117,6 +120,13 @@ package components
 		{
 			removeEventListener(Event.ADDED_TO_STAGE, hasStage);
 			
+			// loader
+			load();
+		
+		}
+		
+		private function createDisplay():void
+		{
 			// container						
 			container = new HDividedBox();
 			container.percentWidth = container.percentHeight = 100;
@@ -125,8 +135,8 @@ package components
 			
 			// left 
 			canvas = new MovieClipSWFLoader();
-			canvas.width = 768;
-			canvas.height = 1024;
+			canvas.width = orientation == 1 ? 1024 : 768;
+			canvas.height = orientation == 1 ? 768 : 1024;
 			
 			container.addElement(canvas);
 			
@@ -213,7 +223,14 @@ package components
 			text.height = 60;
 			text.editable = false;
 			
+			editorStepSize = new TextInput();
+			editorStepSize.width = 80;
+			editorStepSize.height = 20;
+			editorStepSize.y = 60 + 30 + 5;
+			editorStepSize.text = "1.0";
+			
 			editorContainer.addElement(text);
+			editorContainer.addElement(editorStepSize);
 			
 			container.addElement(box1);
 			
@@ -236,10 +253,6 @@ package components
 			
 			// skin
 			setSkinColor();
-			
-			// loader
-			load();
-		
 		}
 		
 		//private var layer:Component = null;
@@ -268,7 +281,8 @@ package components
 				layer = new Sprite();
 				layer.name = "INDIVIDUAL_LAYER";
 				
-				var layerBg:Quad = new Quad(768, 1024, 0xe1e1e1);
+				//var layerBg:Quad = new Quad(768, 1024, 0xe1e1e1);
+				var layerBg:Quad = orientation == 1 ? new Quad(1024, 768, 0xe1e1e1) : new Quad(768, 1024, 0xe1e1e1);
 				layerBg.alpha = 0.95;
 				layer.addChild(layerBg);
 				layer.touchable = true;
@@ -312,9 +326,10 @@ package components
 			cursorPosition.setStyle("color", 0x888888);
 		}
 		
+		private var orientation:int;
+		
 		private function load():void
 		{
-			
 			var configLoader:URLLoader = new URLLoader();
 			configLoader.dataFormat = URLLoaderDataFormat.VARIABLES;
 			configLoader.addEventListener(Event.COMPLETE, function(e:Event):void
@@ -326,8 +341,10 @@ package components
 					//Alert.show(ioe.text);
 					Alert.show(ioe.text, "", 4, tree0);
 				});
-				//loader.load(new URLRequest("LoaderSwf.swf"));				
-				//loader.load(new URLRequest(configLoader.data["path"]));
+				
+				orientation = int(configLoader.data["orientation"]);
+				createDisplay();
+				
 				loader.load(new URLRequest(configLoader.data["path"]), new LoaderContext(false, APPLICATION_DOMAIN));
 			
 			});
@@ -487,6 +504,7 @@ package components
 				//
 				canvas.addEventListener(Event.ENTER_FRAME, canvasChange);
 				editorContainer.addElement(text);
+				editorContainer.addElement(editorStepSize);
 				break;
 			default: 
 				text.text = node1.@name;
@@ -520,9 +538,11 @@ package components
 				
 				text.text = nodeName + ":    " + node1.@type + "\nvalue:    " + (nodeName == "color" ? "0x" + uint(dob[nodeName]).toString(16) : fixPropName(dob[nodeName]));
 				
-				if (editorContainer.numElements <= 1)
+				//if (editorContainer.numElements <= 1)
+				if (editorContainer.numElements <= 2)
 				{
 					var input:*;
+					
 					if (node1.@type == "Number")
 					{
 						if (nodeName == "alpha")
@@ -530,7 +550,8 @@ package components
 							input = new HSlider();
 							HSlider(input).minimum = 0;
 							HSlider(input).maximum = 1;
-							HSlider(input).stepSize = 0.05;
+							//HSlider(input).stepSize = 0.05;
+							HSlider(input).stepSize = Number(editorStepSize.text);
 							HSlider(input).width = 140;
 						}
 						else
@@ -538,7 +559,8 @@ package components
 							input = new NumericStepper();
 							NumericStepper(input).minimum = -int.MAX_VALUE;
 							NumericStepper(input).maximum = int.MAX_VALUE;
-							NumericStepper(input).stepSize = String(nodeName).search("scale") != -1 || String(nodeName).search("rotation") != -1 ? 0.01 : 1;
+							//NumericStepper(input).stepSize = String(nodeName).search("scale") != -1 || String(nodeName).search("rotation") != -1 ? 0.01 : 1.0;
+							NumericStepper(input).stepSize = Number(editorStepSize.text);  
 						}
 						
 						Range(input).value = Number(dob[nodeName]);
@@ -578,22 +600,41 @@ package components
 					else if (node1.@type == "String")
 					{
 						input = new TextInput();
-						TextInput(input).width = 300;
+						TextInput(input).width = 250;
 						TextInput(input).height = 40;
 						TextInput(input).text = String(dob[nodeName]);
 					}
 					else trace("no valid type");
 					
 					if (!input) return;
+					
 					input.y = text.height + 5;
+					
+					editorStepSize.visible = false;
+					if (input is NumericStepper)
+					{
+						editorStepSize.visible = true;
+						editorStepSize.text = Range(input).stepSize.toString();
+						editorStepSize.addEventListener(Event.CHANGE, function(e:Event = null):void
+						{
+							if (Number(editorStepSize.text))
+							{
+								NumericStepper(input).stepSize = Number(editorStepSize.text);
+							}
+						});
+					}
+					
 					input.addEventListener(Event.CHANGE, function(e:Event):void
 					{
+						
 						try
 						{
 							if (e.currentTarget is Range)
 							{
 								dob[nodeName] = input["value"];
 								updatePropsList();
+								
+								if (e.currentTarget is NumericStepper) NumericStepper(input).textDisplay.text = String(dob[nodeName]);
 							}
 							else if (e.currentTarget is CheckBox)
 							{
