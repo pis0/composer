@@ -550,8 +550,7 @@ package components
 							input = new HSlider();
 							HSlider(input).minimum = 0;
 							HSlider(input).maximum = 1;
-							//HSlider(input).stepSize = 0.05;
-							HSlider(input).stepSize = Number(editorStepSize.text);
+							HSlider(input).stepSize = 0.05;
 							HSlider(input).width = 140;
 						}
 						else
