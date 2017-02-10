@@ -453,7 +453,14 @@ package components
 				tree1.dataProvider = describeType(dob).elements().( //
 				(//
 				name() == "accessor" && ( //
-				@declaredBy == "starling.display::DisplayObject"  //
+				//
+				// native
+				@declaredBy == "flash.text::TextField"  //
+				|| @declaredBy == "flash.text::StageText"  //
+				|| @declaredBy == "flash.display::DisplayObject"  //
+				//
+				// statling
+				|| @declaredBy == "starling.display::DisplayObject"  //
 				|| @declaredBy == "starling.display::DisplayObjectContainer" //
 				|| @declaredBy == "starling.display::Image" //
 				|| @declaredBy == "starling.display::Sprite" //
@@ -462,11 +469,12 @@ package components
 				|| @declaredBy == "starling.extensions::ParticleSystem" //
 				|| @declaredBy == "starling.extensions::PDParticleSystem" //
 				//
-				|| @declaredBy == "com.assukar.view.starling::Component" // Custom
-				|| @declaredBy == "com.assukar.view.starling::EffectableComponent" // Custom
-				|| @declaredBy == "com.assukar.view.starling::AssukarTextField" // Custom 
-				|| @declaredBy == "com.assukar.view.starling::AssukarMovieClip" // Custom
-				|| @declaredBy == "com.assukar.view.starling::AssukarMovieBytes" // Custom
+				// custom
+				|| @declaredBy == "com.assukar.view.starling::Component" // 
+				|| @declaredBy == "com.assukar.view.starling::EffectableComponent" // 
+				|| @declaredBy == "com.assukar.view.starling::AssukarTextField" //  
+				|| @declaredBy == "com.assukar.view.starling::AssukarMovieClip" // 
+				|| @declaredBy == "com.assukar.view.starling::AssukarMovieBytes" // 
 				) //
 				&& @access == "readwrite") // || name() == "variable" //
 				).( //
@@ -695,6 +703,7 @@ package components
 		
 		private function fixPropName(value:String):String
 		{
+			if (!value) return "null";
 			value = value.replace(/[\u000d\u000a\u0008\u0020]+/g, " ");
 			return value.length >= 30 ? value.slice(0, 30) + "..." : value;
 		}

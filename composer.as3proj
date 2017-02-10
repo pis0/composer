@@ -4,7 +4,7 @@
   <output>
     <movie outputType="Application" />
     <movie input="" />
-    <movie path="..\Magic\dev\static\magic\game\swf\_COMPOSER.swf" />
+    <movie path="..\#PIPA\bin\_COMPOSER.swf" />
     <movie fps="60" />
     <movie width="1536" />
     <movie height="1024" />
@@ -21,6 +21,7 @@
     <class path="..\Assukar\dev\client\libs" />
     <class path="..\Assukar\dev\client\airong\src" />
     <class path="..\Assukar\dev\client\view\src" />
+    <class path="..\Assukar\dev\client\domain\src" />
   </classpaths>
   <!-- Build options -->
   <build>

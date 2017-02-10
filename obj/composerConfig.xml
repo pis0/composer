@@ -16,7 +16,7 @@
     </define>
     <define append="true">
       <name>CONFIG::timeStamp</name>
-      <value>'07/02/2017'</value>
+      <value>'10/02/2017'</value>
     </define>
     <define append="true">
       <name>CONFIG::air</name>
@@ -39,6 +39,7 @@
       <path-element>E:\workspace\Assukar\dev\client\libs</path-element>
       <path-element>E:\workspace\Assukar\dev\client\airong\src</path-element>
       <path-element>E:\workspace\Assukar\dev\client\view\src</path-element>
+      <path-element>E:\workspace\Assukar\dev\client\domain\src</path-element>
       <path-element>C:\Program Files (x86)\FlashDevelop\Library\AS3\classes</path-element>
     </source-path>
     <library-path append="true">
