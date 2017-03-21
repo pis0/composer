@@ -4,7 +4,7 @@
   <output>
     <movie outputType="Application" />
     <movie input="" />
-    <movie path="..\Magic\dev\static\magic\game\swf\_COMPOSER.swf" />
+    <movie path="..\Praia\dev\static\praia\game\swf\_COMPOSER.swf" />
     <movie fps="60" />
     <movie width="1536" />
     <movie height="1024" />
