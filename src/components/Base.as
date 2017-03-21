@@ -1,6 +1,30 @@
 package components
 {
-	
+	import starling.display.DisplayObject;
+	import starling.events.TouchEvent;
+	import spark.components.Application;
+	import spark.components.Button;
+	import spark.components.CheckBox;
+	import spark.components.Group;
+	import spark.components.HSlider;
+	import spark.components.NumericStepper;
+	import spark.components.TextInput;
+	import spark.components.ToggleButton;
+	import spark.components.supportClasses.Range;
+
+	import starling.events.Touch;
+
+	import mx.containers.HDividedBox;
+	import mx.containers.VDividedBox;
+	import mx.controls.Alert;
+	import mx.controls.ColorPicker;
+	import mx.controls.ComboBase;
+	import mx.controls.MovieClipSWFLoader;
+	import mx.controls.TextArea;
+	import mx.controls.Tree;
+	import mx.events.FlexEvent;
+	import mx.events.ListEvent;
+
 	import flash.desktop.Clipboard;
 	import flash.desktop.ClipboardFormats;
 	import flash.display.Loader;
@@ -17,28 +41,7 @@ package components
 	import flash.utils.describeType;
 	import flash.utils.getQualifiedClassName;
 	import flash.utils.setInterval;
-	import mx.containers.HDividedBox;
-	import mx.containers.VDividedBox;
-	import mx.controls.Alert;
-	import mx.controls.ColorPicker;
-	import mx.controls.ComboBase;
-	import mx.controls.MovieClipSWFLoader;
-	import mx.controls.TextArea;
-	import mx.controls.Tree;
-	import mx.events.FlexEvent;
-	import mx.events.ListEvent;
-	import spark.components.Application;
-	import spark.components.Button;
-	import spark.components.CheckBox;
-	import spark.components.Group;
-	import spark.components.HSlider;
-	import spark.components.NumericStepper;
-	import spark.components.TextInput;
-	import spark.components.ToggleButton;
-	import spark.components.supportClasses.Range;
-	import starling.display.DisplayObject;
-	import starling.events.Touch;
-	import starling.events.TouchEvent;
+	
 	
 	public class Base extends Application
 	{
@@ -94,7 +97,7 @@ package components
 		private var playPauseBtn:ToggleButton;
 		private var editorContainer:Group;
 		private var canvas:MovieClipSWFLoader;
-		private var container:HDividedBox
+		private var container:HDividedBox;
 		private var loader:Loader;
 		
 		private var cursorPosition:TextArea;
@@ -597,7 +600,7 @@ package components
 				temp = item.@name.split(": ");
 				valueTemp = dob[temp[0]];
 				value = valueTemp is String ? JSON.stringify(valueTemp) : String(valueTemp);
-				result += temp[0] + ": " + value
+				result += temp[0] + ": " + value;
 				flag = true;
 			}
 			result += "}";
