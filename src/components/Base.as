@@ -398,7 +398,7 @@ package components
 			try
 			{
 				var starling:Object = loader.contentLoaderInfo.applicationDomain.getDefinition(DEFAULT_DEFINITION)["current"];
-				starling[playPauseBtn.selected ? "stop" : "start"]();
+				starling[String(playPauseBtn.selected ? "stop" : "start")]();
 			}
 			catch (e:Error)
 			{
