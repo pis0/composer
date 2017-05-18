@@ -487,6 +487,7 @@ package components
 				// statling
 				|| @declaredBy == "starling.display::DisplayObject"  //
 				|| @declaredBy == "starling.display::DisplayObjectContainer" //
+                || @declaredBy == "starling.display::Quad" //
 				|| @declaredBy == "starling.display::Image" //
 				|| @declaredBy == "starling.display::Sprite" //
 				|| @declaredBy == "starling.display::Sprite3D" //
