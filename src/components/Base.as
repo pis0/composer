@@ -123,10 +123,13 @@ package components
 		private function hasStage(e:Event):void
 		{
 			removeEventListener(Event.ADDED_TO_STAGE, hasStage);
-			
+
+			//TODO to fix
 			// loader
 			load();
-		
+
+//			//TODO to delete
+//            createDisplay();
 		}
 		
 		private function createDisplay():void
