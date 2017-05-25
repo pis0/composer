@@ -2,6 +2,10 @@ package components
 {
 
     import com.assukar.airong.utils.Utils;
+    import com.assukar.airong.utils.composer.ComposerDataAction;
+    import com.assukar.airong.utils.composer.ComposerDataObject;
+
+    import controller.LocalServerSocketController;
 
     import flash.desktop.Clipboard;
     import flash.desktop.ClipboardFormats;
@@ -33,8 +37,6 @@ package components
     import mx.events.FlexEvent;
     import mx.events.ListEvent;
     import mx.graphics.SolidColor;
-
-    import remote.LocalServerSocket;
 
     import spark.components.Application;
     import spark.components.Button;
@@ -88,30 +90,43 @@ package components
         private function refresh(definition:String, methods:String = null):void
         {
 
-            //TODO to delete
+            //TODO to fix
             Utils.wraplog("refresh: " + definition + ", " + methods);
 
-            LocalServerSocket.ME.send([definition, methods]);
-            return;
+            var cdo:ComposerDataObject = new ComposerDataObject();
+            cdo.action = ComposerDataAction.REFRESH;
+            cdo.data = [definition, methods];
 
-
-            clearLayer();
-
-            var clazz:Object = loader.contentLoaderInfo.applicationDomain.getDefinition(definition);
-            if (methods && methods.length)
+            LocalServerSocketController.ME.request(cdo, function (data:XML):void
             {
-                var methodsTemp:Array = methods.split(",");
-                while (methodsTemp.length) clazz = clazz[methodsTemp.shift()];
-            }
-            var list0:XML = parseComp(clazz, null);
-            //for (var key:String in childList) trace(key, childList[key]);
-            tree0.dataProvider = list0;
-            tree0.labelField = "@name";
+                //for (var key:String in childList) trace(key, childList[key]);
+                tree0.dataProvider = data;
+                tree0.labelField = "@name";
+            });
+
+
+//            clearLayer();
+//
+//            var clazz:Object = loader.contentLoaderInfo.applicationDomain.getDefinition(definition);
+//            if (methods && methods.length)
+//            {
+//                var methodsTemp:Array = methods.split(",");
+//                while (methodsTemp.length) clazz = clazz[methodsTemp.shift()];
+//            }
+//            var list0:XML = parseComp(clazz, null);
+
+
         }
 
         public function Base()
         {
+            initControllers();
             addEventListener(FlexEvent.CREATION_COMPLETE, init, false, 0, true);
+        }
+
+        private function initControllers():void
+        {
+            LocalServerSocketController.ME = new LocalServerSocketController();
         }
 
         private function init(e:FlexEvent):void
@@ -146,8 +161,8 @@ package components
             createDisplay();
 
             // server
-            LocalServerSocket.ME = new LocalServerSocket();
-            LocalServerSocket.ME.start();
+            LocalServerSocketController.ME.initiate(8888, "192.168.100.26");
+
 
         }
 
@@ -479,6 +494,11 @@ package components
 
         private function treeChange(e:ListEvent):void
         {
+
+            //TODO to fix
+            return;
+
+
             //text.text = "";
             canvas.removeEventListener(Event.ENTER_FRAME, canvasChange);
 
