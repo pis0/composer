@@ -11,6 +11,7 @@ package controller
     import flash.net.Socket;
     import flash.net.registerClassAlias;
     import flash.utils.ByteArray;
+    import flash.utils.Dictionary;
 
     import remote.LocalServerSocketChannel;
 
@@ -84,7 +85,7 @@ package controller
         }
 
 
-        private var requestCallback:Function = null;
+        private var requestCallback:Dictionary = new Dictionary();
 
         public function request(data:ComposerDataObject, callback:Function = null):void
         {
@@ -95,7 +96,7 @@ package controller
                     clientSocket.writeObject(data);
                     clientSocket.flush();
 
-                    requestCallback = callback;
+                    requestCallback[data.action] = callback;
 
                     Utils.wraplog("Sent message to " + clientSocket.remoteAddress + ":" + clientSocket.remotePort);
                 }
@@ -113,7 +114,16 @@ package controller
             switch (result.action)
             {
                 case ComposerDataAction.REFRESH:
-                    if(requestCallback) requestCallback(result.data as XML);
+                    if (requestCallback[result.action]) requestCallback[result.action](result.data as XML);
+                    break;
+                case ComposerDataAction.SELECT_COMP:
+                case ComposerDataAction.UPDATE_PROP_LABEL:
+                case ComposerDataAction.COPY_PROP:
+                    if (requestCallback[result.action]) requestCallback[result.action](result.data as String);
+                    break;
+                case ComposerDataAction.GET_PROP_LABEL:
+                case ComposerDataAction.CHANGE_PROP:
+                    if (requestCallback[result.action]) requestCallback[result.action](result.data as Array);
                     break;
             }
 

@@ -14,7 +14,6 @@ package components
     import flash.events.Event;
     import flash.events.IOErrorEvent;
     import flash.events.MouseEvent;
-    import flash.geom.Point;
     import flash.net.URLLoader;
     import flash.net.URLLoaderDataFormat;
     import flash.net.URLRequest;
@@ -22,7 +21,6 @@ package components
     import flash.system.LoaderContext;
     import flash.utils.Dictionary;
     import flash.utils.clearInterval;
-    import flash.utils.describeType;
     import flash.utils.getQualifiedClassName;
     import flash.utils.setInterval;
 
@@ -30,7 +28,6 @@ package components
     import mx.containers.VDividedBox;
     import mx.controls.Alert;
     import mx.controls.ColorPicker;
-    import mx.controls.ComboBase;
     import mx.controls.MovieClipSWFLoader;
     import mx.controls.TextArea;
     import mx.controls.Tree;
@@ -52,10 +49,7 @@ package components
     import spark.primitives.Rect;
 
     import starling.core.Starling;
-    import starling.display.DisplayObject;
-    import starling.display.Quad;
     import starling.display.Sprite;
-    import starling.events.Touch;
     import starling.events.TouchEvent;
 
     public class Base extends Application
@@ -89,9 +83,6 @@ package components
 
         private function refresh(definition:String, methods:String = null):void
         {
-
-            //TODO to fix
-            Utils.wraplog("refresh: " + definition + ", " + methods);
 
             var cdo:ComposerDataObject = new ComposerDataObject();
             cdo.action = ComposerDataAction.REFRESH;
@@ -279,8 +270,6 @@ package components
 
             box1.addElement(editorStepSize);
 
-            //TODO to review
-            //box1.addElement(editorContainer);
             editorScroller = new Scroller();
             editorScroller.percentWidth = 100;
             editorScroller.percentHeight = 40;
@@ -312,6 +301,10 @@ package components
 
         private function clearLayer():void
         {
+            //TODO to fix
+            Utils.wraplog("clearLayer");
+            return;
+
             if (!starlingg) starlingg = loader.contentLoaderInfo.applicationDomain.getDefinition(DEFAULT_DEFINITION)["current"];
 
             if (layer)
@@ -324,36 +317,40 @@ package components
 
         private function drawObject(e:MouseEvent):void
         {
-            try
-            {
-                clearLayer();
 
-                //layer = new Component();
-                layer = new Sprite();
-                layer.name = "INDIVIDUAL_LAYER";
+            //TODO to fix
+            Utils.wraplog("drawObject");
 
-                //var layerBg:Quad = new Quad(768, 1024, 0xe1e1e1);
-                var layerBg:Quad = orientation == 1 ? new Quad(1024, 768, 0xe1e1e1) : new Quad(768, 1024, 0xe1e1e1);
-                layerBg.alpha = 0.95;
-                layer.addChild(layerBg);
-                layer.touchable = true;
-
-                Starling(starlingg).stage.addChild(layer);
-
-                var clazz:Object = loader.contentLoaderInfo.applicationDomain.getDefinition(getQualifiedClassName(dob));
-                layer.addChild((new clazz())["draw"]());
-
-                var list0:XML = parseComp(layer.getChildAt(1), null);
-                tree0.dataProvider = list0;
-                tree0.labelField = "@name";
-                tree0.invalidateList();
-
-            }
-            catch (e:Error)
-            {
-                Alert.show(e.message, "", 4, tree0);
-                clearLayer();
-            }
+//            try
+//            {
+//                clearLayer();
+//
+//                //layer = new Component();
+//                layer = new Sprite();
+//                layer.name = "INDIVIDUAL_LAYER";
+//
+//                //var layerBg:Quad = new Quad(768, 1024, 0xe1e1e1);
+//                var layerBg:Quad = orientation == 1 ? new Quad(1024, 768, 0xe1e1e1) : new Quad(768, 1024, 0xe1e1e1);
+//                layerBg.alpha = 0.95;
+//                layer.addChild(layerBg);
+//                layer.touchable = true;
+//
+//                Starling(starlingg).stage.addChild(layer);
+//
+//                var clazz:Object = loader.contentLoaderInfo.applicationDomain.getDefinition(getQualifiedClassName(dob));
+//                layer.addChild((new clazz())["draw"]());
+//
+//                var list0:XML = parseComp(layer.getChildAt(1), null);
+//                tree0.dataProvider = list0;
+//                tree0.labelField = "@name";
+//                tree0.invalidateList();
+//
+//            }
+//            catch (e:Error)
+//            {
+//                Alert.show(e.message, "", 4, tree0);
+//                clearLayer();
+//            }
         }
 
         private function setSkinColor():void
@@ -432,6 +429,12 @@ package components
 
         private function playPauseBtnClick(e:MouseEvent):void
         {
+
+            //TODO to fix
+            Utils.wraplog("playPauseBtnClick");
+            return;
+
+
             try
             {
                 var starling:Object = loader.contentLoaderInfo.applicationDomain.getDefinition(DEFAULT_DEFINITION)["current"];
@@ -487,23 +490,16 @@ package components
         private var tree1:Tree;
 
         private var node0:XML;
-        //private var node1:XML;
         private var node1:Array;
 
-        private var dob:Object;
+//        private var dob:Object;
 
         private function treeChange(e:ListEvent):void
         {
 
-            //TODO to fix
-            return;
-
-
-            //text.text = "";
-            canvas.removeEventListener(Event.ENTER_FRAME, canvasChange);
+//            canvas.removeEventListener(Event.ENTER_FRAME, canvasChange);
 
             editorContainer.removeAllElements();
-            //editorContainer.removeChildren(1, int.MAX_VALUE);
             Clipboard.generalClipboard.clear();
 
             var target:Tree = Tree(e.currentTarget);
@@ -512,117 +508,118 @@ package components
             {
                 case "tree0":
                     node0 = target.selectedItem as XML;
-                    dob = childList[String(node0.@name)];
+//                    dob = childList[String(node0.@name)];
 
-                    if (dob.hasOwnProperty("unflatten")) dob["unflatten"]();
+                    var cdo:ComposerDataObject = new ComposerDataObject();
+                    cdo.action = ComposerDataAction.SELECT_COMP;
+                    cdo.data = String(node0.@name);
 
-                    //
-                    tree1.dataProvider = describeType(dob).elements().( //
-                            (//
-                            name() == "accessor" && ( //
-                                    //
-                                    // native
-                                    @declaredBy == "flash.text::TextField"  //
-                                    || @declaredBy == "flash.text::StageText"  //
-                                    || @declaredBy == "flash.display::DisplayObject"  //
-                                    //
-                                    // statling
-                                    || @declaredBy == "starling.display::DisplayObject"  //
-                                    || @declaredBy == "starling.display::DisplayObjectContainer" //
-                                    || @declaredBy == "starling.display::Quad" //
-                                    || @declaredBy == "starling.display::Image" //
-                                    || @declaredBy == "starling.display::Sprite" //
-                                    || @declaredBy == "starling.display::Sprite3D" //
-                                    || @declaredBy == "starling.text::TextField" //
-                                    || @declaredBy == "starling.extensions::ParticleSystem" //
-                                    || @declaredBy == "starling.extensions::PDParticleSystem" //
-                                    //
-                                    // custom
-                                    || @declaredBy == "com.assukar.view.starling::Component" //
-                                    || @declaredBy == "com.assukar.view.starling::EffectableComponent" //
-                                    || @declaredBy == "com.assukar.view.starling::AssukarTextField" //
-                                    || @declaredBy == "com.assukar.view.starling::AssukarMovieClip" //
-                                    || @declaredBy == "com.assukar.view.starling::AssukarMovieBytes" //
-                            ) //
-                            && @access == "readwrite") // || name() == "variable" //
-                            ).( //
-                    @type == "uint" //
-                    || @type == "int" //
-                    || @type == "Number" //
-                    || @type == "Boolean" //
-                    || @type == "String" //
-                            ).(@name != "name"); //
-                    //
-
-                    tree1.visible = false;
-                    updatePropsList();
-
-                    tree1.labelField = "@name";
-
-                    // global / local positions
-                    if (dob is DisplayObject)
+                    LocalServerSocketController.ME.request(cdo, function (data:String):void
                     {
-                        if (DisplayObject(dob).hasEventListener(TouchEvent.TOUCH)) DisplayObject(dob).removeEventListener(TouchEvent.TOUCH, updatePositionsDisplay);
-                        dob.addEventListener(TouchEvent.TOUCH, updatePositionsDisplay);
-                    }
+
+                        tree1.dataProvider = new XMLList(data);
+
+//                        if (dob.hasOwnProperty("unflatten")) dob["unflatten"]();
+
+                        //
+//                        tree1.dataProvider = describeType(dob).elements().( //
+//                                (//
+//                                name() == "accessor" && ( //
+//                                        //
+//                                        // native
+//                                        @declaredBy == "flash.text::TextField"  //
+//                                        || @declaredBy == "flash.text::StageText"  //
+//                                        || @declaredBy == "flash.display::DisplayObject"  //
+//                                        //
+//                                        // statling
+//                                        || @declaredBy == "starling.display::DisplayObject"  //
+//                                        || @declaredBy == "starling.display::DisplayObjectContainer" //
+//                                        || @declaredBy == "starling.display::Quad" //
+//                                        || @declaredBy == "starling.display::Image" //
+//                                        || @declaredBy == "starling.display::Sprite" //
+//                                        || @declaredBy == "starling.display::Sprite3D" //
+//                                        || @declaredBy == "starling.text::TextField" //
+//                                        || @declaredBy == "starling.extensions::ParticleSystem" //
+//                                        || @declaredBy == "starling.extensions::PDParticleSystem" //
+//                                        //
+//                                        // custom
+//                                        || @declaredBy == "com.assukar.view.starling::Component" //
+//                                        || @declaredBy == "com.assukar.view.starling::EffectableComponent" //
+//                                        || @declaredBy == "com.assukar.view.starling::AssukarTextField" //
+//                                        || @declaredBy == "com.assukar.view.starling::AssukarMovieClip" //
+//                                        || @declaredBy == "com.assukar.view.starling::AssukarMovieBytes" //
+//                                ) //
+//                                && @access == "readwrite") // || name() == "variable" //
+//                                ).( //
+//                        @type == "uint" //
+//                        || @type == "int" //
+//                        || @type == "Number" //
+//                        || @type == "Boolean" //
+//                        || @type == "String" //
+//                                ).(@name != "name"); //
+//                        //
+
+
+                        tree1.visible = false;
+                        updatePropsList();
+
+                        tree1.labelField = "@name";
+
+                        //TODO to fix
+                        // global / local positions
+//                        if (dob is DisplayObject)
+//                        {
+//                            if (DisplayObject(dob).hasEventListener(TouchEvent.TOUCH)) DisplayObject(dob).removeEventListener(TouchEvent.TOUCH, updatePositionsDisplay);
+//                            dob.addEventListener(TouchEvent.TOUCH, updatePositionsDisplay);
+//                        }
+
+                    });
+
 
                     break;
                 case "tree1":
 
-                    //node1 = target.selectedItem as XML;
                     node1 = target.selectedItems as Array;
 
-                    parsePropsToObjectAndCopy();
+                    var cdo:ComposerDataObject = new ComposerDataObject();
+                    cdo.action = ComposerDataAction.GET_PROP_LABEL;
+                    cdo.data = node1 as Array;
 
-                    //editorContainer.addElement(editorStepSize);
-
-                    //if (target.selectedItems.length >= 2 || !node1) return;
-
-                    //editorContainer.removeAllElements();
-
-                    for (var i:int = 0; i < target.selectedItems.length; i++)
+                    LocalServerSocketController.ME.request(cdo, function (data:Array):void
                     {
+//                        for (var i:int = 0; i < target.selectedItems.length; i++)
+                        for (var i:int = 0; i < node1.length; i++)
+                        {
+                            var editorElement:Group = new Group();
+                            var rect:Rect = new Rect();
+                            rect.percentWidth = rect.percentHeight = 100;
+                            rect.fill = new SolidColor(0x333333, 1.0);
+                            editorElement.addElement(rect);
 
-                        //TODO to review
-                        //editorContainer.addElement(text);
-                        //editorContainer.addElement(editorStepSize);
-                        var editorElement:Group = new Group();
-                        var rect:Rect = new Rect();
-                        rect.percentWidth = rect.percentHeight = 100;
-                        rect.fill = new SolidColor(0x333333, 1.0);
-                        editorElement.addElement(rect);
+                            var text:TextArea = new TextArea();
+                            text.percentWidth = 100;
+                            text.height = 20;
+                            text.editable = false;
+                            text.selectable = false;
+                            text.setStyle("borderVisible", false);
+                            text.setStyle("contentBackgroundColor", 0x333333);
 
-                        var text:TextArea = new TextArea();
-                        text.percentWidth = 100;
-                        text.height = 20;
-                        text.editable = false;
-                        text.selectable = false;
-                        text.setStyle("borderVisible", false);
-                        text.setStyle("contentBackgroundColor", 0x333333);
+                            editorElement.addElement(text);
 
-                        editorElement.addElement(text);
+                            editorContainer.addElement(editorElement);
 
-                        //var editorStepSize:TextInput = new TextInput();
-                        //editorStepSize.width = 80;
-                        //editorStepSize.height = 20;
-                        //editorStepSize.y = text.height + 30 + 5;
-                        //editorStepSize.text = "1.0";
+//                            var nodeName:String = String(node1[i].@name).split(":")[0];
+//                            text.text = nodeName + ":    " + node1[i].@type + "\nvalue:    " + (nodeName == "color" ? "0x" + uint(dob[nodeName]).toString(16) : fixPropName(dob[nodeName]));
+                            text.text = data[i];
+                        }
 
-                        //editorElement.addElement(editorStepSize);
+//                        parsePropsToObjectAndCopy();
 
-                        //editorContainer.addElement(editorElement);
-                        //editorContainer.addElement(editorStepSize);
-                        editorContainer.addElement(editorElement);
+//                        canvas.addEventListener(Event.ENTER_FRAME, canvasChange);
+                        canvasChange();
 
-                        //var nodeName:String = String(node1.@name).split(":")[0];
-                        var nodeName:String = String(node1[i].@name).split(":")[0];
-                        //text.text = nodeName + ":    " + node1.@type + "\nvalue:    " + (nodeName == "color" ? "0x" + uint(dob[nodeName]).toString(16) : fixPropName(dob[nodeName]));
-                        text.text = nodeName + ":    " + node1[i].@type + "\nvalue:    " + (nodeName == "color" ? "0x" + uint(dob[nodeName]).toString(16) : fixPropName(dob[nodeName]));
-                        //
+                    });
 
-                    }
-
-                    canvas.addEventListener(Event.ENTER_FRAME, canvasChange);
 
                     break;
                 default:
@@ -634,194 +631,193 @@ package components
 
         private function updatePositionsDisplay(e:TouchEvent):void
         {
-            var t:Touch = e.getTouch(dob as DisplayObject);
-            var l:Point;
-            if (t)
-            {
-                l = t.getLocation(dob as DisplayObject);
-                cursorPosition.text = "global( " + int(t.globalX) + ", " + int(t.globalY) + " ) - local( " + int(l.x) + ", " + int(l.y) + " )";
-                cursorPosition.alpha = 1.0;
-            }
-            else
-            {
-                cursorPosition.text = "global( 0, 0 ) - local( 0, 0)";
-                cursorPosition.alpha = 0.6;
-            }
+
+            //TODO to fix
+            Utils.wraplog("updatePositionsDisplay");
+
+//            var t:Touch = e.getTouch(dob as DisplayObject);
+//            var l:Point;
+//            if (t)
+//            {
+//                l = t.getLocation(dob as DisplayObject);
+//                cursorPosition.text = "global( " + int(t.globalX) + ", " + int(t.globalY) + " ) - local( " + int(l.x) + ", " + int(l.y) + " )";
+//                cursorPosition.alpha = 1.0;
+//            }
+//            else
+//            {
+//                cursorPosition.text = "global( 0, 0 ) - local( 0, 0)";
+//                cursorPosition.alpha = 0.6;
+//            }
         }
 
-        private function canvasChange(e:Event):void
+//        private function canvasChange(e:Event):void
+        private function canvasChange():void
         {
 
-            //if (editorContainer.numElements <= 1)
-            for (var i:int = 0; i < editorContainer.numElements; i++)
+            var cdo:ComposerDataObject = new ComposerDataObject();
+            cdo.action = ComposerDataAction.CHANGE_PROP;
+            cdo.data = node1 as Array;
+            LocalServerSocketController.ME.request(cdo, function (data:Array):void
             {
-
-                var g:Group = editorContainer.getElementAt(i) as Group;
-
-                //if (editorContainer.numElements <= 2)
-                //if (g)
-                //if (g.numElements <= 1)
-                if (g.numElements <= 2)
+                for (var i:int = 0; i < editorContainer.numElements; i++)
                 {
+                    var dob:Object = data[i];
 
-                    var text:TextArea = g.getChildAt(0) as TextArea;
-                    //var text:TextArea = editorContainer.getChildAt(0) as TextArea;
+                    var g:Group = editorContainer.getElementAt(i) as Group;
 
-                    //if (text && text.text.length && node1 && dob)
-                    if (text && text.text.length && node1[i] && dob)
+                    if (g.numElements <= 2)
                     {
-                        //var nodeName:String = String(node1.@name).split(":")[0];
-                        var nodeName:String = String(node1[i].@name).split(":")[0];
+                        var text:TextArea = g.getChildAt(0) as TextArea;
 
-                        //text.text = nodeName + ":    " + node1.@type + "\nvalue:    " + (nodeName == "color" ? "0x" + uint(dob[nodeName]).toString(16) : fixPropName(dob[nodeName]));
-                        text.text = nodeName + ":    " + node1[i].@type; // + "\nvalue:    " + (nodeName == "color" ? "0x" + uint(dob[nodeName]).toString(16) : fixPropName(dob[nodeName]));
-
-                        //var editorStepSize:TextInput = new TextInput();
-                        //editorStepSize.width = 80;
-                        //editorStepSize.height = 20;
-                        //editorStepSize.y = text.height + 30 + 5;
-                        //editorStepSize.text = "1.0";
-
-                        //g.addElement(editorStepSize);
-
-                        var input:*;
-
-                        //if (node1.@type == "Number")
-                        if (node1[i].@type == "Number")
+//                        if (text && text.text.length && node1[i] && dob)
+                        if (text && text.text.length && node1[i])
                         {
-                            if (nodeName == "alpha")
+                            var nodeName:String = String(node1[i].@name).split(":")[0];
+                            text.text = nodeName + ":    " + node1[i].@type;
+                            var input:*;
+
+                            if (node1[i].@type == "Number")
                             {
-                                input = new HSlider();
-                                HSlider(input).minimum = 0;
-                                HSlider(input).maximum = 1;
-                                HSlider(input).stepSize = 0.05;
-                                HSlider(input).width = 140;
+                                if (nodeName == "alpha")
+                                {
+                                    input = new HSlider();
+                                    HSlider(input).minimum = 0;
+                                    HSlider(input).maximum = 1;
+                                    HSlider(input).stepSize = 0.05;
+                                    HSlider(input).width = 140;
+                                }
+                                else
+                                {
+                                    input = new NumericStepper();
+                                    NumericStepper(input).minimum = -int.MAX_VALUE;
+                                    NumericStepper(input).maximum = int.MAX_VALUE;
+                                    NumericStepper(input).stepSize = Number(editorStepSize.text);
+                                }
+
+//                                Range(input).value = Number(dob[nodeName]);
+                                Range(input).value = Number(dob);
                             }
-                            else
+                            else if (node1[i].@type == "int")
                             {
                                 input = new NumericStepper();
                                 NumericStepper(input).minimum = -int.MAX_VALUE;
                                 NumericStepper(input).maximum = int.MAX_VALUE;
-                                //NumericStepper(input).stepSize = String(nodeName).search("scale") != -1 || String(nodeName).search("rotation") != -1 ? 0.01 : 1.0;
-                                NumericStepper(input).stepSize = Number(editorStepSize.text);
-                            }
-
-                            Range(input).value = Number(dob[nodeName]);
-                        }
-                        //else if (node1.@type == "int")
-                        else if (node1[i].@type == "int")
-                        {
-                            input = new NumericStepper();
-                            NumericStepper(input).minimum = -int.MAX_VALUE;
-                            NumericStepper(input).maximum = int.MAX_VALUE;
-                            NumericStepper(input).stepSize = 1.0;
-
-                            Range(input).value = Number(dob[nodeName]);
-                        }
-                        //else if (node1.@type == "uint")
-                        else if (node1[i].@type == "uint")
-                        {
-                            if (nodeName == "color")
-                            {
-                                input = new ColorPicker();
-                                ColorPicker(input).showTextField = true;
-                                ColorPicker(input).selectedColor = uint(dob[nodeName]);
-                            }
-                            else
-                            {
-                                input = new NumericStepper();
-                                NumericStepper(input).minimum = 0;
-                                NumericStepper(input).maximum = int.MAX_VALUE;
                                 NumericStepper(input).stepSize = 1.0;
 
-                                Range(input).value = Number(dob[nodeName]);
+//                                Range(input).value = Number(dob[nodeName]);
+                                Range(input).value = Number(dob);
                             }
-                        }
-                        //else if (node1.@type == "Boolean")
-                        else if (node1[i].@type == "Boolean")
-                        {
-                            input = new CheckBox();
-                            CheckBox(input).selected = Boolean(dob[nodeName]);
-                        }
-                        //else if (node1.@type == "String")
-                        else if (node1[i].@type == "String")
-                        {
-                            input = new TextInput();
-                            TextInput(input).width = 250;
-                            TextInput(input).height = 40;
-                            TextInput(input).text = String(dob[nodeName]);
-                        }
-                        else trace("no valid type");
-
-                        if (!input) return;
-
-                        input.y = text.height + 5;
-
-                        //editorStepSize.visible = false;
-                        //if (input is NumericStepper)
-                        //{
-                        //editorStepSize.visible = true;
-                        //g.addElement(editorStepSize);
-                        //}
-
-                        //input["name"] = editorStepSize["name"] = nodeName;
-                        input["name"] = nodeName;
-
-                        input.addEventListener(Event.CHANGE, function (e:Event):void
-                        {
-                            try
+                            else if (node1[i].@type == "uint")
                             {
-                                if (e.currentTarget is Range)
+                                if (nodeName == "color")
                                 {
-                                    if (Number(editorStepSize.text)) e.currentTarget["stepSize"] = Number(editorStepSize.text);
+                                    input = new ColorPicker();
+                                    ColorPicker(input).showTextField = true;
 
-                                    //dob[nodeName] = input["value"];
-                                    dob[e.currentTarget.name] = e.currentTarget["value"];
-                                    updatePropsList();
-                                    parsePropsToObjectAndCopy();
+//                                    ColorPicker(input).selectedColor = uint(dob[nodeName]);
+                                    ColorPicker(input).selectedColor = uint(dob);
+                                }
+                                else
+                                {
+                                    input = new NumericStepper();
+                                    NumericStepper(input).minimum = 0;
+                                    NumericStepper(input).maximum = int.MAX_VALUE;
+                                    NumericStepper(input).stepSize = 1.0;
 
-                                    //if (e.currentTarget is NumericStepper) NumericStepper(input).textDisplay.text = String(dob[nodeName]);
-                                    if (e.currentTarget is NumericStepper) NumericStepper(e.currentTarget).textDisplay.text = String(dob[e.currentTarget.name]);
-                                }
-                                else if (e.currentTarget is CheckBox)
-                                {
-                                    //dob[nodeName] = CheckBox(input).selected;
-                                    dob[e.currentTarget.name] = CheckBox(e.currentTarget).selected;
-                                    updatePropsList();
-                                    parsePropsToObjectAndCopy();
-                                }
-                                else if (e.currentTarget is TextInput)
-                                {
-                                    //dob[nodeName] = TextInput(input).text;
-                                    dob[e.currentTarget.name] = TextInput(e.currentTarget).text;
-                                    updatePropsList();
-                                    parsePropsToObjectAndCopy();
-                                }
-                                else if (e.currentTarget is ComboBase)
-                                {
-                                    //dob[nodeName] = ColorPicker(input).selectedColor;
-                                    dob[e.currentTarget.name] = ColorPicker(e.currentTarget).selectedColor;
-                                    updatePropsList();
-                                    parsePropsToObjectAndCopy();
+//                                    Range(input).value = Number(dob[nodeName]);
+                                    Range(input).value = Number(dob);
                                 }
                             }
-                            catch (err:Error)
+                            else if (node1[i].@type == "Boolean")
                             {
-                                //Alert.show(err.message);
-                                trace(err.message);
+                                input = new CheckBox();
+//                                CheckBox(input).selected = Boolean(dob[nodeName]);
+                                CheckBox(input).selected = Boolean(dob);
                             }
+                            else if (node1[i].@type == "String")
+                            {
+                                input = new TextInput();
+                                TextInput(input).width = 250;
+                                TextInput(input).height = 40;
 
-                        });
+//                                TextInput(input).text = String(dob[nodeName]);
+                                TextInput(input).text = String(dob);
+                            }
+                            else trace("no valid type");
 
-                        //editorContainer.addElement(input);
-                        if (!g.containsElement(input)) g.addElement(input);
+                            if (!input) return;
 
+                            input.y = text.height + 5;
+
+                            input["name"] = nodeName;
+
+                            input.addEventListener(Event.CHANGE, function (e:Event):void
+                            {
+
+                                //TODO to fix
+                                Utils.wraplog("input: " + e.currentTarget.name);
+
+//                                function getDobByName(n:String):Object
+//                                {
+//                                    for(var o:Object in data)
+//                                    {
+//                                        if(o["name"] == n) return o;
+//                                    }
+//                                }
+//
+//                                try
+//                                {
+//                                    if (e.currentTarget is Range)
+//                                    {
+//                                        if (Number(editorStepSize.text)) e.currentTarget["stepSize"] = Number(editorStepSize.text);
+//
+////                                        dob[e.currentTarget.name] = e.currentTarget["value"];
+//                                        getDobByName(e.currentTarget.name)["value"] = e.currentTarget["value"];
+//                                        updatePropsList();
+////                                        parsePropsToObjectAndCopy();
+//
+//                                        if (e.currentTarget is NumericStepper)
+//                                        {
+////                                            NumericStepper(e.currentTarget).textDisplay.text = String(dob[e.currentTarget.name]);
+//                                            NumericStepper(e.currentTarget).textDisplay.text = String(getDobByName(e.currentTarget.name));
+//                                        }
+//                                    }
+//                                    else if (e.currentTarget is CheckBox)
+//                                    {
+//                                        dob[e.currentTarget.name] = CheckBox(e.currentTarget).selected;
+//                                        updatePropsList();
+////                                        parsePropsToObjectAndCopy();
+//                                    }
+//                                    else if (e.currentTarget is TextInput)
+//                                    {
+//                                        dob[e.currentTarget.name] = TextInput(e.currentTarget).text;
+//                                        updatePropsList();
+////                                        parsePropsToObjectAndCopy();
+//                                    }
+//                                    else if (e.currentTarget is ComboBase)
+//                                    {
+//                                        dob[e.currentTarget.name] = ColorPicker(e.currentTarget).selectedColor;
+//                                        updatePropsList();
+////                                        parsePropsToObjectAndCopy();
+//                                    }
+//                                }
+//                                catch (err:Error)
+//                                {
+//                                    //Alert.show(err.message);
+//                                    trace(err.message);
+//                                }
+
+                            });
+
+                            if (!g.containsElement(input)) g.addElement(input);
+
+
+                        }
                     }
                 }
-            }
 
-            //editorContainer.invalidateSize();
-            //editorScroller.invalidateDisplayList();
+
+            });
 
         }
 
@@ -833,54 +829,78 @@ package components
             clearInterval(updatePropsListDelay);
             updatePropsListDelay = setInterval(function ():void
             {
-                var tempNodeName:String;
-                for each (var node:XML in tree1.dataProvider)
+
+                var cdo:ComposerDataObject = new ComposerDataObject();
+                cdo.action = ComposerDataAction.UPDATE_PROP_LABEL;
+                cdo.data = XMLList(tree1.dataProvider).toXMLString();
+
+                LocalServerSocketController.ME.request(cdo, function (data:String):void
                 {
-                    tempNodeName = String(node.@name).split(":")[0];
+                    tree1.dataProvider = new XMLList(data);
+                    tree1.invalidateList();
+                    clearInterval(updatePropsListDelay);
+                    tree1.visible = true;
 
-                    if (tempNodeName == "color")
-                    {
-                        node.@name = tempNodeName + ": 0x" + uint(dob[tempNodeName]).toString(16);
-                    }
-                    //else node.@name = fixPropName(tempNodeName + ": " + dob[tempNodeName]);
-                    else node.@name = tempNodeName + ": " + fixPropName(String(dob[tempNodeName]));
-                    delete node.metadata;
-                }
-                tree1.invalidateList();
-                clearInterval(updatePropsListDelay);
+                    parsePropsToObjectAndCopy();
 
-                tree1.visible = true;
+                });
+
+//                var tempNodeName:String;
+//                for each (var node:XML in tree1.dataProvider)
+//                {
+//                    tempNodeName = String(node.@name).split(":")[0];
+//                    if (tempNodeName == "color")
+//                    {
+//                        node.@name = tempNodeName + ": 0x" + uint(dob[tempNodeName]).toString(16);
+//                    }
+//                    //else node.@name = fixPropName(tempNodeName + ": " + dob[tempNodeName]);
+//                    else node.@name = tempNodeName + ": " + fixPropName(String(dob[tempNodeName]));
+//                    delete node.metadata;
+//                }
+//                tree1.invalidateList();
+//                clearInterval(updatePropsListDelay);
+//                tree1.visible = true;
 
             }, UPDATE_PROPS_LIST_DELAY_TIME);
 
         }
 
-        private function fixPropName(value:String):String
-        {
-            if (!value) return "null";
-            value = value.replace(/[\u000d\u000a\u0008\u0020]+/g, " ");
-            return value.length >= 30 ? value.slice(0, 30) + "..." : value;
-        }
+//        private function fixPropName(value:String):String
+//        {
+//            if (!value) return "null";
+//            value = value.replace(/[\u000d\u000a\u0008\u0020]+/g, " ");
+//            return value.length >= 30 ? value.slice(0, 30) + "..." : value;
+//        }
 
         private function parsePropsToObjectAndCopy():void
         {
-            var temp:Array;
-            var result:String = "{";
-            var value:String;
-            var valueTemp:*;
-            var flag:Boolean = false;
-            for each (var item:XML in tree1.selectedItems)
-            {
-                if (flag) result += ", ";
-                temp = item.@name.split(": ");
-                valueTemp = dob[temp[0]];
-                value = valueTemp is String ? JSON.stringify(valueTemp) : String(valueTemp);
-                result += temp[0] + ": " + value
-                flag = true;
-            }
-            result += "}";
 
-            Clipboard.generalClipboard.setData(ClipboardFormats.TEXT_FORMAT, result);
+            var cdo:ComposerDataObject = new ComposerDataObject();
+            cdo.action = ComposerDataAction.COPY_PROP;
+            cdo.data = tree1.selectedItems as Array;
+
+            LocalServerSocketController.ME.request(cdo, function (data:String):void
+            {
+                Clipboard.generalClipboard.setData(ClipboardFormats.TEXT_FORMAT, data);
+            });
+
+//            var temp:Array;
+//            var result:String = "{";
+//            var value:String;
+//            var valueTemp:*;
+//            var flag:Boolean = false;
+//            for each (var item:XML in tree1.selectedItems)
+//            {
+//                if (flag) result += ", ";
+//                temp = item.@name.split(": ");
+//                valueTemp = dob[temp[0]];
+//                value = valueTemp is String ? JSON.stringify(valueTemp) : String(valueTemp);
+//                result += temp[0] + ": " + value
+//                flag = true;
+//            }
+//            result += "}";
+//
+//            Clipboard.generalClipboard.setData(ClipboardFormats.TEXT_FORMAT, result);
         }
 
     }
