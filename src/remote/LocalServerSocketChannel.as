@@ -1,7 +1,9 @@
 package remote
 {
     import com.assukar.airong.utils.Utils;
+
     import controller.LocalServerSocketController;
+
     import flash.events.ServerSocketConnectEvent;
     import flash.net.ServerSocket;
 
@@ -20,7 +22,7 @@ package remote
             serverSocket.addEventListener(ServerSocketConnectEvent.CONNECT, LocalServerSocketController.ME.channelConnect);
             serverSocket.listen();
 
-            Utils.wraplog("Bound to: " + serverSocket.localAddress + ":" + serverSocket.localPort);
+            Utils.print("Bound to: " + serverSocket.localAddress + ":" + serverSocket.localPort);
         }
 
 

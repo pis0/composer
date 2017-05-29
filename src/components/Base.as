@@ -1,7 +1,6 @@
 package components
 {
 
-    import com.assukar.airong.utils.Utils;
     import com.assukar.airong.utils.composer.ComposerDataAction;
     import com.assukar.airong.utils.composer.ComposerDataObject;
 
@@ -10,25 +9,16 @@ package components
     import flash.desktop.Clipboard;
     import flash.desktop.ClipboardFormats;
     import flash.display.Loader;
-    import flash.display.LoaderInfo;
     import flash.events.Event;
-    import flash.events.IOErrorEvent;
     import flash.events.MouseEvent;
-    import flash.net.URLLoader;
-    import flash.net.URLLoaderDataFormat;
-    import flash.net.URLRequest;
-    import flash.system.ApplicationDomain;
-    import flash.system.LoaderContext;
-    import flash.utils.Dictionary;
     import flash.utils.clearInterval;
-    import flash.utils.getQualifiedClassName;
     import flash.utils.setInterval;
 
     import mx.containers.HDividedBox;
     import mx.containers.VDividedBox;
     import mx.controls.Alert;
     import mx.controls.ColorPicker;
-    import mx.controls.MovieClipSWFLoader;
+    import mx.controls.ComboBase;
     import mx.controls.TextArea;
     import mx.controls.Tree;
     import mx.events.FlexEvent;
@@ -48,64 +38,28 @@ package components
     import spark.components.supportClasses.Range;
     import spark.primitives.Rect;
 
-    import starling.core.Starling;
-    import starling.display.Sprite;
-    import starling.events.TouchEvent;
-
     public class Base extends Application
     {
-        static private var APPLICATION_DOMAIN:ApplicationDomain = ApplicationDomain.currentDomain;
-
         [Embed(source="../../lib/assets/playpauseicon.png")]
         static private var playpauseicon:Class;
 
         static private const DEFAULT_DEFINITION:String = "starling.core::Starling";
         static private const DEFAULT_METHODS:String = "current,stage";
 
-        public function start(comp:Object):void
-        {
-            canvas.source = comp;
-            canvas.scaleContent = false;
-
-            stage.color = 0x0000;
-            stage.stage3Ds[0].addEventListener(Event.CONTEXT3D_CREATE, context3DCreate);
-        }
-
         private var definition:String;
         private var methods:String;
 
-        private function context3DCreate(e:Event):void
-        {
-            container.removeElement(canvas);
-            this.x = orientation == 1 ? 1024 : 768;
-            container.percentWidth = orientation == 1 ? 34 : 50;
-        }
-
         private function refresh(definition:String, methods:String = null):void
         {
-
             var cdo:ComposerDataObject = new ComposerDataObject();
             cdo.action = ComposerDataAction.REFRESH;
             cdo.data = [definition, methods];
 
             LocalServerSocketController.ME.request(cdo, function (data:XML):void
             {
-                //for (var key:String in childList) trace(key, childList[key]);
                 tree0.dataProvider = data;
                 tree0.labelField = "@name";
             });
-
-
-//            clearLayer();
-//
-//            var clazz:Object = loader.contentLoaderInfo.applicationDomain.getDefinition(definition);
-//            if (methods && methods.length)
-//            {
-//                var methodsTemp:Array = methods.split(",");
-//                while (methodsTemp.length) clazz = clazz[methodsTemp.shift()];
-//            }
-//            var list0:XML = parseComp(clazz, null);
-
 
         }
 
@@ -134,26 +88,19 @@ package components
         private var editorScroller:Scroller
         private var editorContainer:Group;
         private var editorStepSize:TextInput;
-        private var canvas:MovieClipSWFLoader;
         private var container:HDividedBox
         private var loader:Loader;
 
-        private var cursorPosition:TextArea;
+//        private var cursorPosition:TextArea;
 
         private function hasStage(e:Event):void
         {
             removeEventListener(Event.ADDED_TO_STAGE, hasStage);
 
-            //TODO to fix
-//			// loader
-//			load();
-
-            //TODO to delete
             createDisplay();
 
             // server
-            LocalServerSocketController.ME.initiate(8888, "192.168.100.26");
-
+            LocalServerSocketController.ME.initiate(COMPOSER::PORT, COMPOSER::HOST);
 
         }
 
@@ -164,13 +111,6 @@ package components
             container.percentWidth = container.percentHeight = 100;
 
             addElement(container);
-
-            // left
-            canvas = new MovieClipSWFLoader();
-            canvas.width = orientation == 1 ? 1024 : 768;
-            canvas.height = orientation == 1 ? 768 : 1024;
-
-            container.addElement(canvas);
 
             // middle
 
@@ -209,21 +149,21 @@ package components
             playPauseBtn.x = 84;
             playPauseBtn.y = 60;
 
-            cursorPosition = new TextArea();
-            cursorPosition.width = 300;
-            cursorPosition.height = 20;
-            cursorPosition.x = 4;
-            cursorPosition.y = 60 + 40 + 14;
-            cursorPosition.text = "global( 0, 0 ) - local( 0, 0 )";
-            cursorPosition.editable = false;
-            cursorPosition.selectable = false;
-            cursorPosition.alpha = 0.6;
+//            cursorPosition = new TextArea();
+//            cursorPosition.width = 300;
+//            cursorPosition.height = 20;
+//            cursorPosition.x = 4;
+//            cursorPosition.y = 60 + 40 + 14;
+//            cursorPosition.text = "global( 0, 0 ) - local( 0, 0 )";
+//            cursorPosition.editable = false;
+//            cursorPosition.selectable = false;
+//            cursorPosition.alpha = 0.6;
 
             refreshContainer.addElement(refreshDefinitionText);
             refreshContainer.addElement(refreshMethodsText);
             refreshContainer.addElement(refreshBtn);
             refreshContainer.addElement(playPauseBtn);
-            refreshContainer.addElement(cursorPosition);
+//            refreshContainer.addElement(cursorPosition);
 
             tree0 = new Tree();
             tree0.percentWidth = 100;
@@ -249,14 +189,6 @@ package components
             editorContainer = new VGroup();
             editorContainer.percentWidth = 100;
             editorContainer.percentHeight = 40;
-
-            //text = new TextArea();
-            //text.percentWidth = 100;
-            //text.height = 40;
-            //text.editable = false;
-
-            //editorContainer.addElement(text);
-            //editorContainer.addElement(editorStepSize);
 
             container.addElement(box1);
 
@@ -295,62 +227,22 @@ package components
             setSkinColor();
         }
 
-        //private var layer:Component = null;
-        private var layer:Sprite = null;
-        private var starlingg:Object = null;
-
-        private function clearLayer():void
-        {
-            //TODO to fix
-            Utils.wraplog("clearLayer");
-            return;
-
-            if (!starlingg) starlingg = loader.contentLoaderInfo.applicationDomain.getDefinition(DEFAULT_DEFINITION)["current"];
-
-            if (layer)
-            {
-                layer.removeChildren(0, -1, true);
-                layer.dispose();
-                if (Starling(starlingg).stage.contains(layer)) Starling(starlingg).stage.removeChild(layer);
-            }
-        }
-
         private function drawObject(e:MouseEvent):void
         {
+            var cdo:ComposerDataObject = new ComposerDataObject();
+            cdo.action = ComposerDataAction.DRAW;
+            cdo.data = null;
 
-            //TODO to fix
-            Utils.wraplog("drawObject");
-
-//            try
-//            {
-//                clearLayer();
-//
-//                //layer = new Component();
-//                layer = new Sprite();
-//                layer.name = "INDIVIDUAL_LAYER";
-//
-//                //var layerBg:Quad = new Quad(768, 1024, 0xe1e1e1);
-//                var layerBg:Quad = orientation == 1 ? new Quad(1024, 768, 0xe1e1e1) : new Quad(768, 1024, 0xe1e1e1);
-//                layerBg.alpha = 0.95;
-//                layer.addChild(layerBg);
-//                layer.touchable = true;
-//
-//                Starling(starlingg).stage.addChild(layer);
-//
-//                var clazz:Object = loader.contentLoaderInfo.applicationDomain.getDefinition(getQualifiedClassName(dob));
-//                layer.addChild((new clazz())["draw"]());
-//
-//                var list0:XML = parseComp(layer.getChildAt(1), null);
-//                tree0.dataProvider = list0;
-//                tree0.labelField = "@name";
-//                tree0.invalidateList();
-//
-//            }
-//            catch (e:Error)
-//            {
-//                Alert.show(e.message, "", 4, tree0);
-//                clearLayer();
-//            }
+            LocalServerSocketController.ME.request(cdo, function (data:String):void
+            {
+                if (!data) Alert.show("drawObject error!", "", 4, tree0);
+                else
+                {
+                    tree0.dataProvider = new XML(data);
+                    tree0.labelField = "@name";
+                    tree0.invalidateList();
+                }
+            });
         }
 
         private function setSkinColor():void
@@ -370,44 +262,15 @@ package components
 
             playPauseBtn.setStyle("icon", playpauseicon);
 
-            cursorPosition.setStyle("borderVisible", false);
-            cursorPosition.setStyle("color", 0x888888);
+//            cursorPosition.setStyle("borderVisible", false);
+//            cursorPosition.setStyle("color", 0x888888);
         }
 
         private var orientation:int;
 
-        private function load():void
-        {
-            var configLoader:URLLoader = new URLLoader();
-            configLoader.dataFormat = URLLoaderDataFormat.VARIABLES;
-            configLoader.addEventListener(Event.COMPLETE, function (e:Event):void
-            {
-                loader = new Loader();
-                loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loaderComplete);
-                loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, function (ioe:IOErrorEvent):void
-                {
-                    //Alert.show(ioe.text);
-                    Alert.show(ioe.text, "", 4, tree0);
-                });
-
-                orientation = int(configLoader.data["orientation"]);
-                createDisplay();
-
-                loader.load(new URLRequest(configLoader.data["path"]), new LoaderContext(false, APPLICATION_DOMAIN));
-
-            });
-            configLoader.load(new URLRequest("_COMPOSER.config"));
-
-        }
-
-        private function loaderComplete(e:Event):void
-        {
-            start(LoaderInfo(e.currentTarget).content);
-        }
 
         private function refreshBtnClick(e:MouseEvent):void
         {
-
             editorContainer.removeAllElements();
             Clipboard.generalClipboard.clear();
 
@@ -429,76 +292,25 @@ package components
 
         private function playPauseBtnClick(e:MouseEvent):void
         {
+            var cdo:ComposerDataObject = new ComposerDataObject();
+            cdo.action = ComposerDataAction.PAUSE_TOGGLE;
+            cdo.data = playPauseBtn.selected as Boolean;
 
-            //TODO to fix
-            Utils.wraplog("playPauseBtnClick");
-            return;
-
-
-            try
+            LocalServerSocketController.ME.request(cdo, function (data:String):void
             {
-                var starling:Object = loader.contentLoaderInfo.applicationDomain.getDefinition(DEFAULT_DEFINITION)["current"];
-                starling[String(playPauseBtn.selected ? "stop" : "start")]();
-            }
-            catch (e:Error)
-            {
-                //Alert.show(e.message);
-                Alert.show(e.message, "", 4, tree0);
-            }
-        }
-
-        private function getClassName(o:*):String
-        {
-            if (o == null) return "null";
-            try
-            {
-                return String(Class(loader.contentLoaderInfo.applicationDomain.getDefinition(getQualifiedClassName(o)))).replace("class ", "");
-            }
-            catch (err:Error)
-            {
-                //Alert.show(err.message);
-            }
-            return "null";
-        }
-
-        private var childList:Dictionary = new Dictionary();
-
-        private function parseComp(dob:Object, result:XML = null):XML
-        {
-            var namee:String;
-            var className:String = getClassName(dob);
-            namee = (dob.name ? dob.name : className != "null" ? className : String(dob)) + "." + String(int.MAX_VALUE * Math.random()).split(".")[0];
-
-            childList[namee] = dob;
-
-            if (!result) result = <data></data>;
-            var nodeTemp:XML = <node></node>;
-            nodeTemp.@name = namee;
-            result = result.appendChild(nodeTemp);
-
-            if (dob.hasOwnProperty("numChildren"))
-            {
-                var i:int, len:int = dob.numChildren;
-                for (i = 0; i < len; i++) parseComp(dob.getChildAt(i), nodeTemp);
-            }
-
-            return result;
+                if (data) Alert.show(data, "", 4, tree0);
+            });
         }
 
         private var text:TextArea;
         private var tree0:Tree;
         private var tree1:Tree;
-
         private var node0:XML;
         private var node1:Array;
 
-//        private var dob:Object;
 
         private function treeChange(e:ListEvent):void
         {
-
-//            canvas.removeEventListener(Event.ENTER_FRAME, canvasChange);
-
             editorContainer.removeAllElements();
             Clipboard.generalClipboard.clear();
 
@@ -507,8 +319,8 @@ package components
             switch (target.id)
             {
                 case "tree0":
+
                     node0 = target.selectedItem as XML;
-//                    dob = childList[String(node0.@name)];
 
                     var cdo:ComposerDataObject = new ComposerDataObject();
                     cdo.action = ComposerDataAction.SELECT_COMP;
@@ -516,50 +328,7 @@ package components
 
                     LocalServerSocketController.ME.request(cdo, function (data:String):void
                     {
-
                         tree1.dataProvider = new XMLList(data);
-
-//                        if (dob.hasOwnProperty("unflatten")) dob["unflatten"]();
-
-                        //
-//                        tree1.dataProvider = describeType(dob).elements().( //
-//                                (//
-//                                name() == "accessor" && ( //
-//                                        //
-//                                        // native
-//                                        @declaredBy == "flash.text::TextField"  //
-//                                        || @declaredBy == "flash.text::StageText"  //
-//                                        || @declaredBy == "flash.display::DisplayObject"  //
-//                                        //
-//                                        // statling
-//                                        || @declaredBy == "starling.display::DisplayObject"  //
-//                                        || @declaredBy == "starling.display::DisplayObjectContainer" //
-//                                        || @declaredBy == "starling.display::Quad" //
-//                                        || @declaredBy == "starling.display::Image" //
-//                                        || @declaredBy == "starling.display::Sprite" //
-//                                        || @declaredBy == "starling.display::Sprite3D" //
-//                                        || @declaredBy == "starling.text::TextField" //
-//                                        || @declaredBy == "starling.extensions::ParticleSystem" //
-//                                        || @declaredBy == "starling.extensions::PDParticleSystem" //
-//                                        //
-//                                        // custom
-//                                        || @declaredBy == "com.assukar.view.starling::Component" //
-//                                        || @declaredBy == "com.assukar.view.starling::EffectableComponent" //
-//                                        || @declaredBy == "com.assukar.view.starling::AssukarTextField" //
-//                                        || @declaredBy == "com.assukar.view.starling::AssukarMovieClip" //
-//                                        || @declaredBy == "com.assukar.view.starling::AssukarMovieBytes" //
-//                                ) //
-//                                && @access == "readwrite") // || name() == "variable" //
-//                                ).( //
-//                        @type == "uint" //
-//                        || @type == "int" //
-//                        || @type == "Number" //
-//                        || @type == "Boolean" //
-//                        || @type == "String" //
-//                                ).(@name != "name"); //
-//                        //
-
-
                         tree1.visible = false;
                         updatePropsList();
 
@@ -587,7 +356,6 @@ package components
 
                     LocalServerSocketController.ME.request(cdo, function (data:Array):void
                     {
-//                        for (var i:int = 0; i < target.selectedItems.length; i++)
                         for (var i:int = 0; i < node1.length; i++)
                         {
                             var editorElement:Group = new Group();
@@ -608,14 +376,9 @@ package components
 
                             editorContainer.addElement(editorElement);
 
-//                            var nodeName:String = String(node1[i].@name).split(":")[0];
-//                            text.text = nodeName + ":    " + node1[i].@type + "\nvalue:    " + (nodeName == "color" ? "0x" + uint(dob[nodeName]).toString(16) : fixPropName(dob[nodeName]));
                             text.text = data[i];
                         }
 
-//                        parsePropsToObjectAndCopy();
-
-//                        canvas.addEventListener(Event.ENTER_FRAME, canvasChange);
                         canvasChange();
 
                     });
@@ -629,12 +392,12 @@ package components
 
         }
 
-        private function updatePositionsDisplay(e:TouchEvent):void
-        {
-
-            //TODO to fix
-            Utils.wraplog("updatePositionsDisplay");
-
+//        private function updatePositionsDisplay(e:TouchEvent):void
+//        {
+//
+//            TODO to fix
+//            Utils.wraplog("updatePositionsDisplay");
+//
 //            var t:Touch = e.getTouch(dob as DisplayObject);
 //            var l:Point;
 //            if (t)
@@ -648,11 +411,13 @@ package components
 //                cursorPosition.text = "global( 0, 0 ) - local( 0, 0)";
 //                cursorPosition.alpha = 0.6;
 //            }
-        }
+//        }
 
-//        private function canvasChange(e:Event):void
+
         private function canvasChange():void
         {
+
+            var dob:Object = null;
 
             var cdo:ComposerDataObject = new ComposerDataObject();
             cdo.action = ComposerDataAction.CHANGE_PROP;
@@ -661,7 +426,7 @@ package components
             {
                 for (var i:int = 0; i < editorContainer.numElements; i++)
                 {
-                    var dob:Object = data[i];
+                    dob = data[i];
 
                     var g:Group = editorContainer.getElementAt(i) as Group;
 
@@ -669,7 +434,6 @@ package components
                     {
                         var text:TextArea = g.getChildAt(0) as TextArea;
 
-//                        if (text && text.text.length && node1[i] && dob)
                         if (text && text.text.length && node1[i])
                         {
                             var nodeName:String = String(node1[i].@name).split(":")[0];
@@ -691,10 +455,17 @@ package components
                                     input = new NumericStepper();
                                     NumericStepper(input).minimum = -int.MAX_VALUE;
                                     NumericStepper(input).maximum = int.MAX_VALUE;
-                                    NumericStepper(input).stepSize = Number(editorStepSize.text);
+
+//                                    NumericStepper(input).stepSize = Number(editorStepSize.text);
+                                    var nStepperAux0:String = String(dob);
+                                    if (nStepperAux0.search(".") != -1)
+                                    {
+                                        var nStepperAux1:Number = String(nStepperAux0.split(".")[1]).length;
+                                        if (nStepperAux1 >= 3) nStepperAux1 = 3;
+                                        NumericStepper(input).stepSize = Number(1 / Math.pow(10, nStepperAux1));
+                                    }
                                 }
 
-//                                Range(input).value = Number(dob[nodeName]);
                                 Range(input).value = Number(dob);
                             }
                             else if (node1[i].@type == "int")
@@ -704,7 +475,6 @@ package components
                                 NumericStepper(input).maximum = int.MAX_VALUE;
                                 NumericStepper(input).stepSize = 1.0;
 
-//                                Range(input).value = Number(dob[nodeName]);
                                 Range(input).value = Number(dob);
                             }
                             else if (node1[i].@type == "uint")
@@ -714,7 +484,6 @@ package components
                                     input = new ColorPicker();
                                     ColorPicker(input).showTextField = true;
 
-//                                    ColorPicker(input).selectedColor = uint(dob[nodeName]);
                                     ColorPicker(input).selectedColor = uint(dob);
                                 }
                                 else
@@ -724,14 +493,13 @@ package components
                                     NumericStepper(input).maximum = int.MAX_VALUE;
                                     NumericStepper(input).stepSize = 1.0;
 
-//                                    Range(input).value = Number(dob[nodeName]);
                                     Range(input).value = Number(dob);
                                 }
                             }
                             else if (node1[i].@type == "Boolean")
                             {
                                 input = new CheckBox();
-//                                CheckBox(input).selected = Boolean(dob[nodeName]);
+
                                 CheckBox(input).selected = Boolean(dob);
                             }
                             else if (node1[i].@type == "String")
@@ -740,7 +508,6 @@ package components
                                 TextInput(input).width = 250;
                                 TextInput(input).height = 40;
 
-//                                TextInput(input).text = String(dob[nodeName]);
                                 TextInput(input).text = String(dob);
                             }
                             else trace("no valid type");
@@ -754,64 +521,43 @@ package components
                             input.addEventListener(Event.CHANGE, function (e:Event):void
                             {
 
-                                //TODO to fix
-                                Utils.wraplog("input: " + e.currentTarget.name);
+                                var cdo:ComposerDataObject = new ComposerDataObject();
+                                cdo.action = ComposerDataAction.APPLY_PROP;
+                                cdo.data = null;
 
-//                                function getDobByName(n:String):Object
-//                                {
-//                                    for(var o:Object in data)
-//                                    {
-//                                        if(o["name"] == n) return o;
-//                                    }
-//                                }
-//
-//                                try
-//                                {
-//                                    if (e.currentTarget is Range)
-//                                    {
-//                                        if (Number(editorStepSize.text)) e.currentTarget["stepSize"] = Number(editorStepSize.text);
-//
-////                                        dob[e.currentTarget.name] = e.currentTarget["value"];
-//                                        getDobByName(e.currentTarget.name)["value"] = e.currentTarget["value"];
-//                                        updatePropsList();
-////                                        parsePropsToObjectAndCopy();
-//
-//                                        if (e.currentTarget is NumericStepper)
-//                                        {
-////                                            NumericStepper(e.currentTarget).textDisplay.text = String(dob[e.currentTarget.name]);
-//                                            NumericStepper(e.currentTarget).textDisplay.text = String(getDobByName(e.currentTarget.name));
-//                                        }
-//                                    }
-//                                    else if (e.currentTarget is CheckBox)
-//                                    {
-//                                        dob[e.currentTarget.name] = CheckBox(e.currentTarget).selected;
-//                                        updatePropsList();
-////                                        parsePropsToObjectAndCopy();
-//                                    }
-//                                    else if (e.currentTarget is TextInput)
-//                                    {
-//                                        dob[e.currentTarget.name] = TextInput(e.currentTarget).text;
-//                                        updatePropsList();
-////                                        parsePropsToObjectAndCopy();
-//                                    }
-//                                    else if (e.currentTarget is ComboBase)
-//                                    {
-//                                        dob[e.currentTarget.name] = ColorPicker(e.currentTarget).selectedColor;
-//                                        updatePropsList();
-////                                        parsePropsToObjectAndCopy();
-//                                    }
-//                                }
-//                                catch (err:Error)
-//                                {
-//                                    //Alert.show(err.message);
-//                                    trace(err.message);
-//                                }
+                                if (e.currentTarget is Range)
+                                {
+                                    if (Number(editorStepSize.text)) e.currentTarget["stepSize"] = Number(editorStepSize.text);
+                                    cdo.data = [e.currentTarget.name, e.currentTarget["value"]];
+                                }
+                                else if (e.currentTarget is CheckBox)
+                                {
+                                    cdo.data = [e.currentTarget.name, CheckBox(e.currentTarget).selected];
+                                }
+                                else if (e.currentTarget is TextInput)
+                                {
+                                    cdo.data = [e.currentTarget.name, TextInput(e.currentTarget).text];
+                                }
+                                else if (e.currentTarget is ComboBase)
+                                {
+                                    cdo.data = [e.currentTarget.name, ColorPicker(e.currentTarget).selectedColor];
+                                }
+
+                                if (cdo.data)
+                                {
+                                    LocalServerSocketController.ME.request(cdo, function (data:Boolean):void
+                                    {
+                                        if (data)
+                                        {
+                                            canvasChange();
+                                            updatePropsList();
+                                        }
+                                    });
+                                }
 
                             });
 
                             if (!g.containsElement(input)) g.addElement(input);
-
-
                         }
                     }
                 }
@@ -836,7 +582,15 @@ package components
 
                 LocalServerSocketController.ME.request(cdo, function (data:String):void
                 {
-                    tree1.dataProvider = new XMLList(data);
+                    var newValues:XMLList = new XMLList(data);
+                    var i:int = 0;
+
+                    var tempNodeName:String;
+                    for each (var node:XML in tree1.dataProvider)
+                    {
+                        node.@name = newValues[i++].@name;
+                        delete node.metadata;
+                    }
                     tree1.invalidateList();
                     clearInterval(updatePropsListDelay);
                     tree1.visible = true;
@@ -845,36 +599,12 @@ package components
 
                 });
 
-//                var tempNodeName:String;
-//                for each (var node:XML in tree1.dataProvider)
-//                {
-//                    tempNodeName = String(node.@name).split(":")[0];
-//                    if (tempNodeName == "color")
-//                    {
-//                        node.@name = tempNodeName + ": 0x" + uint(dob[tempNodeName]).toString(16);
-//                    }
-//                    //else node.@name = fixPropName(tempNodeName + ": " + dob[tempNodeName]);
-//                    else node.@name = tempNodeName + ": " + fixPropName(String(dob[tempNodeName]));
-//                    delete node.metadata;
-//                }
-//                tree1.invalidateList();
-//                clearInterval(updatePropsListDelay);
-//                tree1.visible = true;
-
             }, UPDATE_PROPS_LIST_DELAY_TIME);
 
         }
 
-//        private function fixPropName(value:String):String
-//        {
-//            if (!value) return "null";
-//            value = value.replace(/[\u000d\u000a\u0008\u0020]+/g, " ");
-//            return value.length >= 30 ? value.slice(0, 30) + "..." : value;
-//        }
-
         private function parsePropsToObjectAndCopy():void
         {
-
             var cdo:ComposerDataObject = new ComposerDataObject();
             cdo.action = ComposerDataAction.COPY_PROP;
             cdo.data = tree1.selectedItems as Array;
@@ -883,24 +613,6 @@ package components
             {
                 Clipboard.generalClipboard.setData(ClipboardFormats.TEXT_FORMAT, data);
             });
-
-//            var temp:Array;
-//            var result:String = "{";
-//            var value:String;
-//            var valueTemp:*;
-//            var flag:Boolean = false;
-//            for each (var item:XML in tree1.selectedItems)
-//            {
-//                if (flag) result += ", ";
-//                temp = item.@name.split(": ");
-//                valueTemp = dob[temp[0]];
-//                value = valueTemp is String ? JSON.stringify(valueTemp) : String(valueTemp);
-//                result += temp[0] + ": " + value
-//                flag = true;
-//            }
-//            result += "}";
-//
-//            Clipboard.generalClipboard.setData(ClipboardFormats.TEXT_FORMAT, result);
         }
 
     }

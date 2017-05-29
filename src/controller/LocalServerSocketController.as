@@ -49,7 +49,7 @@ package controller
             clientSocket = e.socket;
             clientSocket.addEventListener(ProgressEvent.SOCKET_DATA, socketData);
 
-            Utils.wraplog("new connection from " + clientSocket.remoteAddress + ":" + clientSocket.remotePort);
+            Utils.print("new connection from " + clientSocket.remoteAddress + ":" + clientSocket.remotePort);
         }
 
 
@@ -77,7 +77,8 @@ package controller
                 return;
             }
 
-            Utils.wraplog("decode completed: " + result);
+//            Utils.print("decode completed: " + result);
+//            Utils.print("decode completed");
             socketDataBytes.clear();
 
             processData(result);
@@ -98,13 +99,13 @@ package controller
 
                     requestCallback[data.action] = callback;
 
-                    Utils.wraplog("Sent message to " + clientSocket.remoteAddress + ":" + clientSocket.remotePort);
+//                    Utils.print("Sent message to " + clientSocket.remoteAddress + ":" + clientSocket.remotePort);
                 }
-                else Utils.wraplog("No socket connection");
+                else Utils.print("No socket connection");
             }
             catch (err:Error)
             {
-                Utils.wraplog(err.message);
+                Utils.print(err.message);
             }
         }
 
@@ -119,11 +120,16 @@ package controller
                 case ComposerDataAction.SELECT_COMP:
                 case ComposerDataAction.UPDATE_PROP_LABEL:
                 case ComposerDataAction.COPY_PROP:
+                case ComposerDataAction.PAUSE_TOGGLE:
+                case ComposerDataAction.DRAW:
                     if (requestCallback[result.action]) requestCallback[result.action](result.data as String);
                     break;
                 case ComposerDataAction.GET_PROP_LABEL:
                 case ComposerDataAction.CHANGE_PROP:
                     if (requestCallback[result.action]) requestCallback[result.action](result.data as Array);
+                    break;
+                case ComposerDataAction.APPLY_PROP:
+                    if (requestCallback[result.action]) requestCallback[result.action](result.data as Boolean);
                     break;
             }
 

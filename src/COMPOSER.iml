@@ -5,26 +5,11 @@
       <configuration name="[PRAIA] composer" target-platform="Desktop" main-class="Main" output-file="_COMPOSER.swf" output-folder="$MODULE_DIR$/../../Praia/dev/static/praia/game/swf">
         <dependencies>
           <entries>
-            <entry library-id="f6f99eaa-b103-4eb5-a44d-f8ca665481be">
-              <dependency linkage="Include" />
-            </entry>
             <entry library-id="f7ab0274-75f9-4bbd-ad0d-582b1c00fe55">
               <dependency linkage="Include" />
             </entry>
             <entry library-id="db1cac42-35a4-4ed7-8a87-6312ef12ac58">
               <dependency linkage="Include" />
-            </entry>
-            <entry library-id="d361d51d-4c48-47b6-af9a-45fe701c9801">
-              <dependency linkage="Include" />
-            </entry>
-            <entry library-id="d0d5c378-2971-4088-ba51-363977a6b37f">
-              <dependency linkage="Include" />
-            </entry>
-            <entry module-name="PRAIA-MAIN-CANVAS" build-configuration-name="DEBUG - [CanvasMainSwf.swf]">
-              <dependency linkage="Loaded" />
-            </entry>
-            <entry module-name="PRAIA-LOADER" build-configuration-name="DEBUG - [LoaderSwf.swf]">
-              <dependency linkage="Loaded" />
             </entry>
           </entries>
           <sdk name="ApacheFlex" />
@@ -34,7 +19,7 @@
             <entry key="compiler.debug.swf" value="true" />
             <entry key="compiler.define" value="" />
           </map>
-          <option name="additionalOptions" value="-default-size=1536,1024  -define+=CONFIG::DEBUG,true" />
+          <option name="additionalOptions" value="-default-size=640,832  -define+=CONFIG::DEBUG,true" />
         </compiler-options>
         <packaging-air-desktop package-file-name="composer" />
         <packaging-android />
@@ -55,16 +40,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library" exported="">
       <library type="flex">
-        <properties id="f6f99eaa-b103-4eb5-a44d-f8ca665481be" />
-        <CLASSES>
-          <root url="file://$MODULE_DIR$/../../_starling/1.8/starling/src" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library type="flex">
         <properties id="f7ab0274-75f9-4bbd-ad0d-582b1c00fe55" />
         <CLASSES>
           <root url="file://$MODULE_DIR$/../../Assukar/dev/client/airong/src" />
@@ -83,27 +58,5 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library type="flex">
-        <properties id="d361d51d-4c48-47b6-af9a-45fe701c9801" />
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../Assukar/dev/client/libs/lua.swc!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library type="flex">
-        <properties id="d0d5c378-2971-4088-ba51-363977a6b37f" />
-        <CLASSES>
-          <root url="file://$MODULE_DIR$/../../_away3d/src" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module" module-name="PRAIA-MAIN-CANVAS" exported="" />
-    <orderEntry type="module" module-name="PRAIA-LOADER" exported="" />
   </component>
 </module>
