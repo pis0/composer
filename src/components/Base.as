@@ -345,7 +345,7 @@ package components
                 
                 node1 = target.selectedItems as Array;
                 
-                var cdo:ComposerDataObject = new ComposerDataObject();
+                cdo = new ComposerDataObject();
                 cdo.action = ComposerDataAction.GET_PROP_LABEL;
                 cdo.data = node1 as Array;
                 
@@ -412,7 +412,9 @@ package components
             
             var dob:Object = null;
             
-            var cdo:ComposerDataObject = new ComposerDataObject();
+            var cdo:ComposerDataObject;
+    
+            cdo = new ComposerDataObject();
             cdo.action = ComposerDataAction.CHANGE_PROP;
             cdo.data = node1 as Array;
             LocalServerSocketController.ME.request(cdo, function ( data:Array ):void
@@ -511,7 +513,7 @@ package components
                             input.addEventListener(Event.CHANGE, function ( e:Event ):void
                             {
                                 
-                                var cdo:ComposerDataObject = new ComposerDataObject();
+                                cdo = new ComposerDataObject();
                                 cdo.action = ComposerDataAction.APPLY_PROP;
                                 cdo.data = null;
                                 
