@@ -8,7 +8,6 @@ package components
     
     import flash.desktop.Clipboard
     import flash.desktop.ClipboardFormats
-    import flash.display.Loader
     import flash.events.Event
     import flash.events.MouseEvent
     import flash.utils.clearInterval
@@ -46,8 +45,8 @@ package components
         static private const DEFAULT_DEFINITION:String = "starling.core::Starling";
         static private const DEFAULT_METHODS:String = "current,stage";
         
-        private var definition:String;
-        private var methods:String;
+//        private var definition:String;
+//        private var methods:String;
         
         private function refresh( definition:String, methods:String = null ):void
         {
@@ -89,7 +88,7 @@ package components
         private var editorContainer:Group;
         private var editorStepSize:TextInput;
         private var container:HDividedBox
-        private var loader:Loader;
+//        private var loader:Loader;
 
 //        private var cursorPosition:TextArea;
         
@@ -265,7 +264,7 @@ package components
 //            cursorPosition.setStyle("color", 0x888888);
         }
         
-        private var orientation:int;
+//        private var orientation:int;
         
         private function refreshBtnClick( e:MouseEvent ):void
         {
@@ -299,7 +298,7 @@ package components
             });
         }
         
-        private var text:TextArea;
+//        private var text:TextArea;
         private var tree0:Tree;
         private var tree1:Tree;
         private var node0:XML;
@@ -576,7 +575,7 @@ package components
                     var newValues:XMLList = new XMLList(data);
                     var i:int = 0;
                     
-                    var tempNodeName:String;
+//                    var tempNodeName:String;
                     for each (var node:XML in tree1.dataProvider)
                     {
                         node.@name = newValues[i++].@name;
