@@ -329,7 +329,7 @@ package components
                     
                     tree1.labelField = "@name";
                     
-                    //TODO to fix
+                    
                     // global / local positions
 //                        if (dob is DisplayObject)
 //                        {
@@ -388,7 +388,7 @@ package components
 //        private function updatePositionsDisplay(e:TouchEvent):void
 //        {
 //
-//            TODO to fix
+//
 //            Utils.wraplog("updatePositionsDisplay");
 //
 //            var t:Touch = e.getTouch(dob as DisplayObject);
