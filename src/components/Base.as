@@ -84,10 +84,10 @@ package components
         private var refreshMethodsText:TextArea;
         private var refreshBtn:Button;
         private var playPauseBtn:ToggleButton;
-        private var editorScroller:Scroller
+        private var editorScroller:Scroller;
         private var editorContainer:Group;
         private var editorStepSize:TextInput;
-        private var container:HDividedBox
+        private var container:HDividedBox;
 //        private var loader:Loader;
 
 //        private var cursorPosition:TextArea;
